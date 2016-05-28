@@ -21,7 +21,6 @@ int main(){
     printf("p0:\n");
     printGas(&glassIn->gas[0]);
 
-
 }
 
 void printGas(gas_particle* p){
@@ -32,7 +31,7 @@ void printGas(gas_particle* p){
 }
 void printHeader(header* h){
     printf("Header:\n");
-    printf("\tsimtime:\t%f\n\tnbodies:\t%i\n\tndim:\t%i\n\tnsph:\t%i\n\tndark:\t%i\n\tnstar:\t%i\n\tpad:\t%i\n\t",
+    printf("\tsimtime:\t%f\n\tnbodies:\t%i\n\tndim:\t%i\n\tnsph:\t%i\n\tndark:\t%i\n\tnstar:\t%i\n\tpad:\t%i\n",
             h->simtime, h->nbodies, h->ndim, h->nsph, h->ndark, h->nstar, h->pad);
     //printf("Float: %i, Int: %i, Double: %i\n", sizeof(float), sizeof(int), sizeof(double));
 }

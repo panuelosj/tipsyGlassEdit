@@ -1,4 +1,12 @@
 //=============================================================================
+//-------------------------DEFINES---------------------------------------------
+//=============================================================================
+#define TYPE_HEADER 1
+#define TYPE_GAS 2
+#define TYPE_DARK 3
+#define TYPE_STAR 4
+
+//=============================================================================
 //-------------------------TYPEDEF STUFFS--------------------------------------
 //=============================================================================
 
@@ -56,6 +64,7 @@ int writeTipsyStd(const char filename[], tipsy* tipsyOut);
 int swapEndianInt(const int valIn);
 double swapEndianDouble(const double valIn);
 float swapEndianFloat(const float valIn);
+void swapEndianBatch(const tipsy* tipsyIn, const int type, const int i);
 
 // tile.c
 void printGas(gas_particle* p);
