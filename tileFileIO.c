@@ -24,7 +24,7 @@ tipsy* readTipsyStd(const char filename[]){
             fread(&newTipsy->gas[i].mass, sizeof(float), 12, fp);               // Read in binary
             swapEndianBatch(newTipsy, TYPE_GAS, i);                             // Swap endianness
         }
-    }
+    } else newTipsy->gas = NULL;
     // Create dark matter particles
     if (newTipsy->header->ndark != 0){                                          // Check if particles exist
         newTipsy->dark = malloc(newTipsy->header->nsph*sizeof(dark_particle));  // Allocate space
@@ -32,7 +32,7 @@ tipsy* readTipsyStd(const char filename[]){
             fread(&newTipsy->dark[i].mass, sizeof(float), 9, fp);               // Read in binary
             swapEndianBatch(newTipsy, TYPE_DARK, i);                            // Swap endianness
         }
-    }
+    } else newTipsy->dark = NULL;
     // Create star particles
     if (newTipsy->header->nstar != 0){                                          // Check if particles exist
         newTipsy->star = malloc(newTipsy->header->nsph*sizeof(star_particle));  // Allocate space
@@ -40,11 +40,11 @@ tipsy* readTipsyStd(const char filename[]){
             fread(&newTipsy->star[i].mass, sizeof(float), 11, fp);              // Read in binary
             swapEndianBatch(newTipsy, TYPE_STAR, i);                            // Swap endianness
         }
-    }
+    } else newTipsy->star = NULL;
 
-// Cleanup
+    // Cleanup
     fclose(fp);
-// Output a pointer to the new tipsy object
+    // Output a pointer to the new tipsy object
     return newTipsy;
 }
 int writeTipsyStd(const char filename[], tipsy* tipsyOut){
@@ -54,7 +54,36 @@ int writeTipsyStd(const char filename[], tipsy* tipsyOut){
     int nstar = tipsyOut->header->nstar;
 
     FILE *fp = fopen(filename, "w");
-// Write header
+    // Write header
+    swapEndianBatch(tipsyOut, TYPE_HEADER, 0);                                  // Swap to .std endianness
+    fwrite(&tipsyOut->header->simtime, sizeof(double), 1, fp);                  // Write to binary
+    fwrite(&tipsyOut->header->nbodies, sizeof(int), 6, fp);
+    swapEndianBatch(tipsyOut, TYPE_HEADER, 0);                                  // Return to working in machine endianness
+    // Write gas particles
+    if (tipsyOut->header->nsph != 0){
+        for (i=0; i < tipsyOut->header->nsph; i++){
+            swapEndianBatch(tipsyOut, TYPE_GAS, i);                             // Swap to .std endianness
+            fwrite(&tipsyOut->gas[i].mass, sizeof(float), 12, fp);              // Write to binary
+            swapEndianBatch(tipsyOut, TYPE_GAS, i);                             // Return to working in machine endianness
+        }
+    }
+    // Write dark matter particles
+    if (tipsyOut->header->ndark != 0){
+        for (i=0; i < tipsyOut->header->ndark; i++){
+            swapEndianBatch(tipsyOut, TYPE_DARK, i);                             // Swap to .std endianness
+            fwrite(&tipsyOut->dark[i].mass, sizeof(float), 9, fp);              // Write to binary
+            swapEndianBatch(tipsyOut, TYPE_DARK, i);                             // Return to working in machine endianness
+        }
+    }
+    // Write gas particles
+    if (tipsyOut->header->nstar != 0){
+        for (i=0; i < tipsyOut->header->nstar; i++){
+            swapEndianBatch(tipsyOut, TYPE_STAR, i);                             // Swap to .std endianness
+            fwrite(&tipsyOut->star[i].mass, sizeof(float), 12, fp);              // Write to binary
+            swapEndianBatch(tipsyOut, TYPE_STAR, i);                             // Return to working in machine endianness
+        }
+    }
 
-
+    // Cleanup
+    fclose(fp);
 }

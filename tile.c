@@ -21,6 +21,7 @@ int main(){
     printf("p0:\n");
     printGas(&glassIn->gas[0]);
 
+    writeTipsyStd("glass16.std.cpy", glassIn);
 }
 
 void printGas(gas_particle* p){

@@ -61,6 +61,8 @@ tipsy* readTipsyStd(const char filename[]);
 int writeTipsyStd(const char filename[], tipsy* tipsyOut);
 
 // tileMisc.c
+tipsy* createTipsy(const double simtime, const int nsph, const int ndark, const int nstar);
+
 int swapEndianInt(const int valIn);
 double swapEndianDouble(const double valIn);
 float swapEndianFloat(const float valIn);

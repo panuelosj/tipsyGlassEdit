@@ -6,6 +6,36 @@
 #include "tile.h"
 
 //=============================================================================
+//-------------------------STRUCT ALLOCATION-----------------------------------
+//=============================================================================
+tipsy* createTipsy(const double simtime, const int nsph, const int ndark, const int nstar){
+    // Create object (pointer to a struct of pointers to memory)
+    tipsy* newTipsy = malloc(sizeof(tipsy));
+    // Allocate and create header
+    newTipsy->header = malloc(sizeof(header));
+    newTipsy->header->simtime = simtime;
+    newTipsy->header->nbodies = nsph + ndark + nstar;
+    newTipsy->header->ndim = 3;
+    newTipsy->header->nsph = nsph;
+    newTipsy->header->ndark = ndark;
+    newTipsy->header->nstar = nstar;
+    newTipsy->header->pad = 0;
+    // Allocate space for gas particles
+    if (newTipsy->header->nsph != 0){
+        newTipsy->gas = malloc(newTipsy->header->nsph*sizeof(gas_particle));
+    } else newTipsy->gas = NULL;
+    if (newTipsy->header->ndark != 0){
+        newTipsy->dark = malloc(newTipsy->header->ndark*sizeof(gas_particle));
+    } else newTipsy->dark = NULL;
+    if (newTipsy->header->nstar != 0){
+        newTipsy->star = malloc(newTipsy->header->nstar*sizeof(gas_particle));
+    } else newTipsy->star = NULL;
+
+    return newTipsy;
+}
+
+
+//=============================================================================
 //-------------------------ENDIAN-SWAPS----------------------------------------
 //=============================================================================
 float swapEndianFloat(const float valIn){
