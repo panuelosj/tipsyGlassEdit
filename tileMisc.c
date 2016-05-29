@@ -9,6 +9,7 @@
 //-------------------------STRUCT ALLOCATION-----------------------------------
 //=============================================================================
 tipsy* createTipsy(const double simtime, const int nsph, const int ndark, const int nstar){
+    int i;
     // Create object (pointer to a struct of pointers to memory)
     tipsy* newTipsy = malloc(sizeof(tipsy));
     // Allocate and create header
@@ -20,15 +21,55 @@ tipsy* createTipsy(const double simtime, const int nsph, const int ndark, const 
     newTipsy->header->ndark = ndark;
     newTipsy->header->nstar = nstar;
     newTipsy->header->pad = 0;
-    // Allocate space for gas particles
+    // Allocate space for gas particles and set default values
     if (newTipsy->header->nsph != 0){
         newTipsy->gas = malloc(newTipsy->header->nsph*sizeof(gas_particle));
+        for (i=0; i < newTipsy->header->nsph; i++){
+            newTipsy->gas[i].mass = 1.0;
+            newTipsy->gas[i].pos[0] = VAL_NaN;
+            newTipsy->gas[i].pos[1] = VAL_NaN;
+            newTipsy->gas[i].pos[2] = VAL_NaN;
+            newTipsy->gas[i].vel[0] = 0.0;
+            newTipsy->gas[i].vel[1] = 0.0;
+            newTipsy->gas[i].vel[2] = 0.0;
+            newTipsy->gas[i].rho = 1.0;
+            newTipsy->gas[i].temp = 1.0;
+            newTipsy->gas[i].eps = 1.0;
+            newTipsy->gas[i].metals = 0.0;
+            newTipsy->gas[i].phi = 1.0;
+        }
     } else newTipsy->gas = NULL;
+    // Allocate space for dark particles and set default values
     if (newTipsy->header->ndark != 0){
-        newTipsy->dark = malloc(newTipsy->header->ndark*sizeof(gas_particle));
+        newTipsy->dark = malloc(newTipsy->header->ndark*sizeof(dark_particle));
+        for (i=0; i < newTipsy->header->ndark; i++){
+            newTipsy->dark[i].mass = 1.0;
+            newTipsy->dark[i].pos[0] = VAL_NaN;
+            newTipsy->dark[i].pos[1] = VAL_NaN;
+            newTipsy->dark[i].pos[2] = VAL_NaN;
+            newTipsy->dark[i].vel[0] = 0.0;
+            newTipsy->dark[i].vel[1] = 0.0;
+            newTipsy->dark[i].vel[2] = 0.0;
+            newTipsy->dark[i].eps = 1.0;
+            newTipsy->dark[i].phi = 1.0;
+        }
     } else newTipsy->dark = NULL;
+    // Allocate space for star particles and set default values
     if (newTipsy->header->nstar != 0){
-        newTipsy->star = malloc(newTipsy->header->nstar*sizeof(gas_particle));
+        newTipsy->star = malloc(newTipsy->header->nstar*sizeof(star_particle));
+        for (i=0; i < newTipsy->header->nstar; i++){
+            newTipsy->star[i].mass = 1.0;
+            newTipsy->star[i].pos[0] = VAL_NaN;
+            newTipsy->star[i].pos[1] = VAL_NaN;
+            newTipsy->star[i].pos[2] = VAL_NaN;
+            newTipsy->star[i].vel[0] = 0.0;
+            newTipsy->star[i].vel[1] = 0.0;
+            newTipsy->star[i].vel[2] = 0.0;
+            newTipsy->star[i].metals = 0.0;
+            newTipsy->star[i].tform = 0.0;
+            newTipsy->star[i].eps = 1.0;
+            newTipsy->star[i].phi = 1.0;
+        }
     } else newTipsy->star = NULL;
 
     return newTipsy;

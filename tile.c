@@ -13,6 +13,8 @@
 int main(){
     // Indexing Variables
     int i,j,k;
+    //printf("Float: %i, Int: %i, Double: %i\n", sizeof(float), sizeof(int), sizeof(double));
+    printf("VAL_NaN: %.10e\n", VAL_NaN);
     // Read in the input glass
     char filename[100] = "glass16.std";
     printf("Reading: %s\n", filename);
