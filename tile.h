@@ -57,6 +57,10 @@ typedef struct {
 //-------------------------FUNCTION PROTOTYPES---------------------------------
 //=============================================================================
 
+// tileCalc.c
+tipsy* tileCompress(tipsy* tipsyIn, const float xCompress, const float yCompress, const float zCompress);
+void tileScaleShrink(tipsy* tipsyIn, const float xShrink, const float yShrink, const float zShrink);
+
 // tileFileIO.c
 tipsy* readTipsyStd(const char filename[]);
 int writeTipsyStd(const char filename[], tipsy* tipsyOut);

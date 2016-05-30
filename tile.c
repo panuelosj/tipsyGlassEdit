@@ -22,8 +22,9 @@ int main(){
     printHeader(glassIn->header);
     printf("p0:\n");
     printGas(&glassIn->gas[0]);
-
-    writeTipsyStd("glass16.std.cpy", glassIn);
+    tipsy* compressed = tileCompress(glassIn, 2, 3, 1);
+    printGas(&compressed->gas[0]);
+    writeTipsyStd("glass16.std.cpy", compressed);
 }
 
 void printGas(gas_particle* p){
