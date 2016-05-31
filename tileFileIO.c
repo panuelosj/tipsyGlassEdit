@@ -16,12 +16,12 @@ tipsy* readTipsyStd(const char filename[]){
     // Create object
     tipsy* newTipsy = malloc(sizeof(tipsy));
 
-    // Create header
+    // Create and read in header
     newTipsy->header = malloc(sizeof(header));                                  // Allocate space
     fread(&newTipsy->header->simtime, sizeof(double), 1, fp);                   // Read in binary
     fread(&newTipsy->header->nbodies, sizeof(int), 6, fp);
     swapEndianBatch(newTipsy, TYPE_HEADER, 0);                                  // Swap endianness
-    // Create gas particles
+    // Create and read in gas particles
     if (newTipsy->header->nsph != 0){                                           // Check if particles exist
         newTipsy->gas = malloc(newTipsy->header->nsph*sizeof(gas_particle));    // Allocate space
         for (i=0; i < newTipsy->header->nsph; i++){
@@ -29,7 +29,7 @@ tipsy* readTipsyStd(const char filename[]){
             swapEndianBatch(newTipsy, TYPE_GAS, i);                             // Swap endianness
         }
     } else newTipsy->gas = NULL;
-    // Create dark matter particles
+    // Create and read in dark matter particles
     if (newTipsy->header->ndark != 0){                                          // Check if particles exist
         newTipsy->dark = malloc(newTipsy->header->nsph*sizeof(dark_particle));  // Allocate space
         for (i=0; i < newTipsy->header->ndark; i++){
@@ -37,7 +37,7 @@ tipsy* readTipsyStd(const char filename[]){
             swapEndianBatch(newTipsy, TYPE_DARK, i);                            // Swap endianness
         }
     } else newTipsy->dark = NULL;
-    // Create star particles
+    // Create and read in star particles
     if (newTipsy->header->nstar != 0){                                          // Check if particles exist
         newTipsy->star = malloc(newTipsy->header->nsph*sizeof(star_particle));  // Allocate space
         for (i=0; i < newTipsy->header->nstar; i++){
@@ -45,6 +45,13 @@ tipsy* readTipsyStd(const char filename[]){
             swapEndianBatch(newTipsy, TYPE_STAR, i);                            // Swap endianness
         }
     } else newTipsy->star = NULL;
+
+    // Create and set attributes
+    newTipsy->attr = malloc(sizeof(attributes));
+    newTipsy->attr->nloadedsph = newTipsy->header->nsph;
+    newTipsy->attr->nloadeddark = newTipsy->header->ndark;
+    newTipsy->attr->nloadedstar = newTipsy->header->nstar;
+    autoFindBounds(newTipsy);
 
     // Cleanup
     fclose(fp);

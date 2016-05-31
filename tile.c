@@ -13,17 +13,23 @@
 int main(){
     // Indexing Variables
     int i,j,k;
-    //printf("Float: %i, Int: %i, Double: %i\n", sizeof(float), sizeof(int), sizeof(double));
-    printf("VAL_NaN: %.10e\n", VAL_NaN);
     // Read in the input glass
     char filename[100] = "glass16.std";
     printf("Reading: %s\n", filename);
     tipsy* glassIn = readTipsyStd(filename);
+
+    glassIn->attr->xmin = -0.5; glassIn->attr->xmax = 0.5;
+    glassIn->attr->ymin = -0.5; glassIn->attr->ymax = 0.5;
+    glassIn->attr->zmin = -0.5; glassIn->attr->zmax = 0.5;
+
     printHeader(glassIn->header);
+
+
     printf("p0:\n");
     printGas(&glassIn->gas[0]);
-    tipsy* compressed = tileCompress(glassIn, 2, 3, 1);
+    tipsy* compressed = tipsyCompress(glassIn, 2, 3, 1);
     printGas(&compressed->gas[0]);
+    printf("%f-%f, %f-%f, %f-%f\n", compressed->attr->xmin, compressed->attr->xmax, compressed->attr->ymin, compressed->attr->ymax, compressed->attr->zmin, compressed->attr->zmax);
     writeTipsyStd("glass16.std.cpy", compressed);
 }
 
