@@ -58,12 +58,14 @@ void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, cons
     const float xShrinkF = (float) xShrink;                                     // float casts
     const float yShrinkF = (float) yShrink;
     const float zShrinkF = (float) zShrink;
+    const float totalShrinkF = xShrinkF * yShrinkF * zShrinkF;
 
-    // Shrink each element's coordinates by the scaling factor given
+    // Shrink each element's coordinates by the scaling factor given, update rho
     for (i=0; i < tipsyIn->header->nsph; i++){
         tipsyIn->gas[i].pos[AXIS_X] /= xShrinkF;
         tipsyIn->gas[i].pos[AXIS_Y] /= yShrinkF;
         tipsyIn->gas[i].pos[AXIS_Z] /= zShrinkF;
+        tipsyIn->gas[i].rho *= totalShrinkF;
     }
     for (i=0; i < tipsyIn->header->ndark; i++){
         tipsyIn->dark[i].pos[AXIS_X] /= xShrinkF;
@@ -80,6 +82,49 @@ void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, cons
     tipsyIn->attr->xmin /= xShrinkF; tipsyIn->attr->xmax /= xShrinkF;
     tipsyIn->attr->ymin /= yShrinkF; tipsyIn->attr->ymax /= yShrinkF;
     tipsyIn->attr->zmin /= zShrinkF; tipsyIn->attr->zmax /= zShrinkF;
+}
+
+void tipsyScaleExpand(tipsy* tipsyIn, const float xExpand, const float yExpand, const float zExpand){
+    /* Expands the tipsy object in each dimension by the given scaling factors
+        by multiplying by that value.
+
+        Parameters:
+            tipsy* tipsyIn      - pointer to the tipsy struct to be shrunk
+            const float xExpand - x dimension expansion factor
+            const float yExpand - y dimension expansion factor
+            const float zExpand - z dimension expansion factor
+        Return:
+            void
+    */
+
+    int i;                                                                      // indexing variables
+    const float xExpandF = (float) xExpand;                                     // float casts
+    const float yExpandF = (float) yExpand;
+    const float zExpandF = (float) zExpand;
+    const float totalExpandF = xExpandF * yExpandF * zExpandF;
+
+    // Expand each element's coordinates by the scaling factor given, update rho
+    for (i=0; i < tipsyIn->header->nsph; i++){
+        tipsyIn->gas[i].pos[AXIS_X] *= xExpandF;
+        tipsyIn->gas[i].pos[AXIS_Y] *= yExpandF;
+        tipsyIn->gas[i].pos[AXIS_Z] *= zExpandF;
+        tipsyIn->gas[i].rho /= totalExpandF;
+    }
+    for (i=0; i < tipsyIn->header->ndark; i++){
+        tipsyIn->dark[i].pos[AXIS_X] *= xExpandF;
+        tipsyIn->dark[i].pos[AXIS_Y] *= yExpandF;
+        tipsyIn->dark[i].pos[AXIS_Z] *= zExpandF;
+    }
+    for (i=0; i < tipsyIn->header->nstar; i++){
+        tipsyIn->star[i].pos[AXIS_X] *= xExpandF;
+        tipsyIn->star[i].pos[AXIS_Y] *= yExpandF;
+        tipsyIn->star[i].pos[AXIS_Z] *= zExpandF;
+    }
+
+    // Expand each boundary by the scaling factor given
+    tipsyIn->attr->xmin *= xExpandF; tipsyIn->attr->xmax *= xExpandF;
+    tipsyIn->attr->ymin *= yExpandF; tipsyIn->attr->ymax *= yExpandF;
+    tipsyIn->attr->zmin *= zExpandF; tipsyIn->attr->zmax *= zExpandF;
 }
 
 /*

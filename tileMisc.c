@@ -42,6 +42,36 @@ void warnCase(const int warningCode){
 }
 
 /*
+########  ########  #### ##    ## ########  ######
+##     ## ##     ##  ##  ###   ##    ##    ##    ##
+##     ## ##     ##  ##  ####  ##    ##    ##
+########  ########   ##  ## ## ##    ##     ######
+##        ##   ##    ##  ##  ####    ##          ##
+##        ##    ##   ##  ##   ###    ##    ##    ##
+##        ##     ## #### ##    ##    ##     ######
+*/
+void printGas(gas_particle* p){
+    printf("\tmass:\t%f\n", p->mass);
+    printf("\tpos:\t%f, %f, %f\n", p->pos[0], p->pos[1], p->pos[2]);
+    printf("\tvel:\t%f, %f, %f\n", p->vel[0], p->vel[1], p->vel[2]);
+    printf("\trho:\t%f\n\ttemp:\t%f\n\teps:\t%f\n\tmetals:\t%f\n\tphi:\t%f\n", p->rho,p->temp,p->eps,p->metals,p->phi);
+}
+void printHeader(header* h){
+    printf("Header:\n");
+    printf("\tsimtime:\t%f\n\tnbodies:\t%i\n\tndim:\t%i\n\tnsph:\t%i\n\tndark:\t%i\n\tnstar:\t%i\n\tpad:\t%i\n",
+            h->simtime, h->nbodies, h->ndim, h->nsph, h->ndark, h->nstar, h->pad);
+    //printf("Float: %i, Int: %i, Double: %i\n", sizeof(float), sizeof(int), sizeof(double));
+}
+void printAttr(attributes* a){
+	printf("Attributes:\n");
+	printf("\txmin:\t%f\txmax:\t%f\n\tymin:\t%f\tymax:\t%f\n\tzmin:\t%f\tzmax:\t%f\n",
+			a->xmin, a->xmax, a->ymin, a->ymax, a->zmin, a->zmax);
+	printf("\tnloadedsph:\t%d\n\tnloadeddark:\t%d\n\tnloadedstar:\t%d\n",
+			a->nloadedsph, a->nloadeddark, a->nloadedstar);
+}
+
+
+/*
 ######## ##    ## ########  ####    ###    ##    ##     ######  ##      ##    ###    ########   ######
 ##       ###   ## ##     ##  ##    ## ##   ###   ##    ##    ## ##  ##  ##   ## ##   ##     ## ##    ##
 ##       ####  ## ##     ##  ##   ##   ##  ####  ##    ##       ##  ##  ##  ##   ##  ##     ## ##

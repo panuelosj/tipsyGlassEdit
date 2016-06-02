@@ -144,8 +144,10 @@ void tipsyExtend(tipsy* tipsyIn, const int nNewSPH, const int nNewDark, const in
             const int nNewDark  - new number of dark particles
             const int nNewStar  - new number of star particles
 
-        ToDo: Add error checking on realloc to check if a larger memory space
-            was found; Add better updates to nloaded to count in case particle
+        ToDo:
+            - Add error checking on realloc to check if a larger memory space
+            was found
+            - Add better updates to nloaded to count in case particle
             array has gaps;
     */
 
@@ -172,4 +174,66 @@ void tipsyExtend(tipsy* tipsyIn, const int nNewSPH, const int nNewDark, const in
         tipsyIn->attr->nloadeddark = tipsyIn->header->ndark;
     if (tipsyIn->attr->nloadedstar > tipsyIn->header->nstar)
         tipsyIn->attr->nloadedstar = tipsyIn->header->nstar;
+}
+
+/*
+      ##  #######  #### ##    ##
+      ## ##     ##  ##  ###   ##
+      ## ##     ##  ##  ####  ##
+      ## ##     ##  ##  ## ## ##
+##    ## ##     ##  ##  ##  ####
+##    ## ##     ##  ##  ##   ###
+ ######   #######  #### ##    ##
+*/
+tipsy* tipsyJoin(tipsy* tipsy1, tipsy* tipsy2){
+    /* Creates a new tipsy object, taking the union of the two input tipsy
+        objects. This is done be cloning the first tipsy input, then extending
+        the clone, and adding the data for the second tipsy input. This means
+        that the larger object should always be placed in first, for better
+        performance.
+
+        Parameters:
+            tipsy* tipsy1, tipsy2   - tipsy objects to take the union of
+
+        ToDo:
+            - add check to see if the input tipsies are full. Program currently
+                assumes the input files are full (uses n_ not nloaded_) and
+                copies them directly, even if some particle values are
+                unitialized
+    */
+
+    int i;                                                                      // indexing variables
+    const int nsph = tipsy1->header->nsph + tipsy2->header->nsph;
+    const int ndark = tipsy1->header->ndark + tipsy2->header->ndark;
+    const int nstar = tipsy1->header->nstar + tipsy2->header->nstar;
+
+    // clone the first tipsy object (inputs the values)
+    tipsy* tipsyOut = tipsyClone(tipsy1);
+    // extend the clone to fit in the values from the second object
+    tipsyExtend(tipsyOut, nsph, ndark, nstar);
+    // copy the second object's values
+    memcpy(&tipsyOut->gas[tipsy1->header->nsph], &tipsy2->gas[0], tipsy2->header->nsph*sizeof(gas_particle));
+    memcpy(&tipsyOut->dark[tipsy1->header->ndark], &tipsy2->dark[0], tipsy2->header->ndark*sizeof(dark_particle));
+    memcpy(&tipsyOut->star[tipsy1->header->nstar], &tipsy2->star[0], tipsy2->header->nstar*sizeof(star_particle));
+
+    // update header values
+    tipsyOut->header->nsph = nsph;
+    tipsyOut->header->ndark = ndark;
+    tipsyOut->header->nstar = nstar;
+    tipsyOut->header->nbodies = nsph+ndark+nstar;
+    // update attributes, current attributes were inherited from tipsy1 when cloned
+    if (tipsy2->attr->xmin < tipsyOut->attr->xmin)
+        tipsyOut->attr->xmin = tipsy2->attr->xmin;
+    if (tipsy2->attr->xmax > tipsyOut->attr->xmax)
+        tipsyOut->attr->xmax = tipsy2->attr->xmax;
+    if (tipsy2->attr->ymin < tipsyOut->attr->ymin)
+        tipsyOut->attr->ymin = tipsy2->attr->ymin;
+    if (tipsy2->attr->ymax > tipsyOut->attr->ymax)
+        tipsyOut->attr->ymax = tipsy2->attr->ymax;
+    if (tipsy2->attr->zmin < tipsyOut->attr->zmin)
+        tipsyOut->attr->zmin = tipsy2->attr->zmin;
+    if (tipsy2->attr->zmax > tipsyOut->attr->zmax)
+        tipsyOut->attr->zmax = tipsy2->attr->zmax;
+
+    return tipsyOut;
 }

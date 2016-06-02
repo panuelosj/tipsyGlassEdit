@@ -5,11 +5,15 @@
 #include <math.h>
 #include "tile.h"
 
-
-//=============================================================================
-//-------------------------COMPARISONS-----------------------------------------
-//=============================================================================
-
+/*
+########   #######  ##     ## ##    ## ########   ######
+##     ## ##     ## ##     ## ###   ## ##     ## ##    ##
+##     ## ##     ## ##     ## ####  ## ##     ## ##
+########  ##     ## ##     ## ## ## ## ##     ##  ######
+##     ## ##     ## ##     ## ##  #### ##     ##       ##
+##     ## ##     ## ##     ## ##   ### ##     ## ##    ##
+########   #######   #######  ##    ## ########   ######
+*/
 void autoFindBounds(tipsy* tipsyIn){
     /* Finds the positions of point extrema in each axis, and sets the _min/_max
         values in the tipsy attributes to those values.
@@ -88,6 +92,15 @@ void autoFindBounds(tipsy* tipsyIn){
     }
 }
 
+/*
+########  ######## ########    ###    ##     ## ##       ########  ######
+##     ## ##       ##         ## ##   ##     ## ##          ##    ##    ##
+##     ## ##       ##        ##   ##  ##     ## ##          ##    ##
+##     ## ######   ######   ##     ## ##     ## ##          ##     ######
+##     ## ##       ##       ######### ##     ## ##          ##          ##
+##     ## ##       ##       ##     ## ##     ## ##          ##    ##    ##
+########  ######## ##       ##     ##  #######  ########    ##     ######
+*/
 void tipsySetDefaults(tipsy* tipsyIn){
     /* Fills in the input struct with some default values in case the struct
         maker couldn't be bothered. Really, I just put this here in case I need

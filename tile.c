@@ -14,37 +14,49 @@ int main(){
     // Indexing Variables
     int i,j,k;
     // Read in the input glass
-    char filename[100] = "glass16.std";
+    char filename[100] = "glass.std";
     printf("Reading: %s\n", filename);
     tipsy* glassIn = readTipsyStd(filename);
-
+    // Set attributes not set by readTipsy
     glassIn->attr->xmin = -0.5; glassIn->attr->xmax = 0.5;
     glassIn->attr->ymin = -0.5; glassIn->attr->ymax = 0.5;
     glassIn->attr->zmin = -0.5; glassIn->attr->zmax = 0.5;
-
+    printf("Input ");
     printHeader(glassIn->header);
+    printAttr(glassIn->attr);
+    printf("=================================================\n");
 
+    // Create 8x compressed glass
+    printf("\nCreating 8x compressed glass:\n");
+    tipsy* glass8x = tipsyClone(glassIn);
+    tipsyScaleShrink(glass8x, 2, 2, 2);
+    tipsyTesselate(glass8x, 2, 2, 2);
+    tipsyCenter(glass8x);
+    printHeader(glass8x->header);
+    printAttr(glass8x->attr);
+    printf("=================================================\n");
+    writeTipsyStd("glass8x.std", glass8x);
 
-    printf("p0:\n");
-    printGas(&glassIn->gas[0]);
-    tipsy* compressed = tipsyClone(glassIn);
-    tipsyScaleShrink(compressed, 2, 3, 1);
-    tipsyTesselate(compressed, 2, 3, 1);
-    tipsyCenter(compressed);
-    printGas(&compressed->gas[0]);
-    printf("%f-%f, %f-%f, %f-%f\n", compressed->attr->xmin, compressed->attr->xmax, compressed->attr->ymin, compressed->attr->ymax, compressed->attr->zmin, compressed->attr->zmax);
-    writeTipsyStd("glass16.std.cpy", compressed);
-}
+    // Create 1/8x compressed glass
+    printf("\nCreating 1/8x compressed glass:\n");
+    tipsy* glass8f = tipsyClone(glassIn);
+    tipsyScaleExpand(glass8f, 2, 2, 2);
+    tipsyCenter(glass8f);
+    printHeader(glass8f->header);
+    printAttr(glass8f->attr);
+    printf("=================================================\n");
+    writeTipsyStd("glass8f.std", glass8f);
 
-void printGas(gas_particle* p){
-    printf("\tmass:\t%f\n", p->mass);
-    printf("\tpos:\t%f, %f, %f\n", p->pos[0], p->pos[1], p->pos[2]);
-    printf("\tvel:\t%f, %f, %f\n", p->vel[0], p->vel[1], p->vel[2]);
-    printf("\trho:\t%f\n\ttemp:\t%f\n\teps:\t%f\n\tmetals:\t%f\n\tphi:\t%f\n", p->rho,p->temp,p->eps,p->metals,p->phi);
-}
-void printHeader(header* h){
-    printf("Header:\n");
-    printf("\tsimtime:\t%f\n\tnbodies:\t%i\n\tndim:\t%i\n\tnsph:\t%i\n\tndark:\t%i\n\tnstar:\t%i\n\tpad:\t%i\n",
-            h->simtime, h->nbodies, h->ndim, h->nsph, h->ndark, h->nstar, h->pad);
-    //printf("Float: %i, Int: %i, Double: %i\n", sizeof(float), sizeof(int), sizeof(double));
+    // Tile the two base units
+    printf("\nCreating Sod Shocktube:\n");
+    tipsyTesselate(glass8f, 7, 1, 1);           // creates 14x2x2
+    tipsyTranslate(glass8f, 1, 0, 0);           // pushes the lower density to only the positive x axis
+    tipsyTesselate(glassIn, 14, 2, 2);          // creates 14x2x2
+    tipsyTranslate(glassIn, -13.5, -0.5, -0.5); // pushes the high density to the negative x axis
+    tipsy* sodShocktube = tipsyJoin(glassIn, glass8f);
+    printHeader(sodShocktube->header);
+    printAttr(sodShocktube->attr);
+    printf("=================================================\n");
+    writeTipsyStd("sodShocktube.std", sodShocktube);
+
 }

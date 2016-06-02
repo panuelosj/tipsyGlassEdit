@@ -100,14 +100,18 @@ typedef struct {
 ##        #######  ##    ##  ######     ##    ####  #######  ##    ##  ######
 */
 // tileCalc.c
+void tipsyCenter(tipsy* tipsyIn);
 void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, const int zShrink);
+void tipsyScaleExpand(tipsy* tipsyIn, const float xExpand, const float yExpand, const float zExpand);
 void tipsyTesselate(tipsy* tipsyIn, const int xTile, const int yTile, const int zTile);
 void tipsyTranslate(tipsy* tipsyIn, const float xShift, const float yShift, const float zShift);
 
 // tileStructEdit.c
 tipsy* tipsyCreate(const double simtime, const int nsph, const int ndark, const int nstar);
+void tipsyDestroy(tipsy* tipsyIn);
 tipsy* tipsyClone(tipsy* tipsyIn);
 void tipsyExtend(tipsy* tipsyIn, const int nNewSPH, const int nNewDark, const int nNewStar);
+tipsy* tipsyJoin(tipsy* tipsy1, tipsy* tipsy2);
 
 // tileFileIO.c
 tipsy* readTipsyStd(const char filename[]);
@@ -121,11 +125,11 @@ void tipsySetDefaults(tipsy* tipsyIn);
 void errorCase(const int errorCode);
 void warnCase(const int warningCode);
 
+void printGas(gas_particle* p);
+void printHeader(header* h);
+void printAttr(attributes* a);
+
 int swapEndianInt(const int valIn);
 double swapEndianDouble(const double valIn);
 float swapEndianFloat(const float valIn);
 void swapEndianBatch(const tipsy* tipsyIn, const int type, const int i);
-
-// tile.c
-void printGas(gas_particle* p);
-void printHeader(header* h);
