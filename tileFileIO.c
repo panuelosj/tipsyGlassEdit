@@ -5,14 +5,47 @@
 #include <math.h>
 #include "tile.h"
 
-//=============================================================================
-//-------------------------READ AND WRITE--------------------------------------
-//=============================================================================
-
+/*
+########  ########    ###    ########
+##     ## ##         ## ##   ##     ##
+##     ## ##        ##   ##  ##     ##
+########  ######   ##     ## ##     ##
+##   ##   ##       ######### ##     ##
+##    ##  ##       ##     ## ##     ##
+##     ## ######## ##     ## ########
+*/
 tipsy* readTipsyStd(const char filename[]){
+    /* Reads in a file in tipsy standard format and writes it into a new tipsy
+        struct. createTipsy() is not called since size of particle structs
+        are unknown until header is read. Header bit could be read first, then
+        the struct created using createTipsy(), but readTipsyStd() and
+        createTipsy() are pretty much completed and further changes are
+        unlikely, so consistency in changes isn't really a problem. Swaps the
+        endianness of the input values when writing to the tipsy struct since
+        most modern machines are little endian and tipsy standard is a big
+        endian format, but I should check the machine endianness for better
+        compatibility.
+        (also idk if there's weird stuff with floating point endianness but
+        currently doesn't look like there is after checking the values with
+        hexdump)
+
+        Parameters:
+            const char filename[]   - filename to be opened
+        Return:
+            pointer to newly created tipsy struct containing the values
+                read in from the file
+
+        ToDo:
+            Include an endian checker to automatically swap the endianness if
+                it is not yet in (big endian) - possibly a compilertime option
+                and make two different source files to compile?
+            Include checking if the file is in the correct format??
+    */
+
+    // Indexing variables
     int i;
 
-    FILE *fp = fopen(filename, "r");
+    FILE *fp = fopen(filename, "r");                                            // Open file pointer
     // Create object
     tipsy* newTipsy = malloc(sizeof(tipsy));
 
@@ -58,7 +91,31 @@ tipsy* readTipsyStd(const char filename[]){
     // Output a pointer to the new tipsy object
     return newTipsy;
 }
+
+/*
+##      ## ########  #### ######## ########
+##  ##  ## ##     ##  ##     ##    ##
+##  ##  ## ##     ##  ##     ##    ##
+##  ##  ## ########   ##     ##    ######
+##  ##  ## ##   ##    ##     ##    ##
+##  ##  ## ##    ##   ##     ##    ##
+ ###  ###  ##     ## ####    ##    ########
+*/
 int writeTipsyStd(const char filename[], tipsy* tipsyOut){
+    /* Writes an input tipsy struct into a file with the tipsy standard format.
+        Function is optimized for minimizing space usage, keeping the endian-
+        swapped values in the same tipsy struct as inputted, and swapping the
+        endianness again after the values are copied to file.
+
+        Parameters:
+            const char filename[]   - filename to write to
+            tipsy* tipsyOut         - tipsy struct to write to file
+        Return:
+            Confirmation of write or error code?
+
+        ToDo:
+            Make return confirmation value or error code.
+    */
     int i;
     int nsph = tipsyOut->header->nsph;
     int ndark = tipsyOut->header->ndark;

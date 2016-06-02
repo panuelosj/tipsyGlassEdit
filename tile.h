@@ -1,11 +1,18 @@
-//=============================================================================
-//-------------------------DEFINES---------------------------------------------
-//=============================================================================
+/*
+  ## ##     ########  ######## ######## #### ##    ## ########  ######
+  ## ##     ##     ## ##       ##        ##  ###   ## ##       ##    ##
+#########   ##     ## ##       ##        ##  ####  ## ##       ##
+  ## ##     ##     ## ######   ######    ##  ## ## ## ######    ######
+#########   ##     ## ##       ##        ##  ##  #### ##             ##
+  ## ##     ##     ## ##       ##        ##  ##   ### ##       ##    ##
+  ## ##     ########  ######## ##       #### ##    ## ########  ######
+ */
 #define TYPE_HEADER 1
 #define TYPE_GAS 2
 #define TYPE_DARK 3
 #define TYPE_STAR 4
 #define VAL_NaN 3.402823466e+38
+
 #define AXIS_X 0
 #define AXIS_Y 1
 #define AXIS_Z 2
@@ -14,10 +21,21 @@
 #define ERR_FILE_OPEN 2
 #define ERR_NO_PARTICLES 3
 
-//=============================================================================
-//-------------------------TYPEDEF STUFFS--------------------------------------
-//=============================================================================
+#define WARN_REALLOC_SHRINK 1
+#define WARN_REALLOC_DATA_LOSS 2
 
+#define ULINE_START \e[4m
+#define ULINE_END \e[0m
+
+/*
+ ######  ######## ########  ##     ##  ######  ########  ######
+##    ##    ##    ##     ## ##     ## ##    ##    ##    ##    ##
+##          ##    ##     ## ##     ## ##          ##    ##
+ ######     ##    ########  ##     ## ##          ##     ######
+      ##    ##    ##   ##   ##     ## ##          ##          ##
+##    ##    ##    ##    ##  ##     ## ##    ##    ##    ##    ##
+ ######     ##    ##     ##  #######   ######     ##     ######
+*/
 typedef struct {
     double simtime;
     int nbodies;
@@ -72,27 +90,37 @@ typedef struct {
     attributes* attr;
 } tipsy;
 
-//=============================================================================
-//-------------------------FUNCTION PROTOTYPES---------------------------------
-//=============================================================================
-
+/*
+######## ##     ## ##    ##  ######  ######## ####  #######  ##    ##  ######
+##       ##     ## ###   ## ##    ##    ##     ##  ##     ## ###   ## ##    ##
+##       ##     ## ####  ## ##          ##     ##  ##     ## ####  ## ##
+######   ##     ## ## ## ## ##          ##     ##  ##     ## ## ## ##  ######
+##       ##     ## ##  #### ##          ##     ##  ##     ## ##  ####       ##
+##       ##     ## ##   ### ##    ##    ##     ##  ##     ## ##   ### ##    ##
+##        #######  ##    ##  ######     ##    ####  #######  ##    ##  ######
+*/
 // tileCalc.c
-tipsy* tipsyCompress(tipsy* tipsyIn, const float xCompress, const float yCompress, const float zCompress);
-void tipsyTesselate(tipsy* tipsyIn, const int xTile, const int yTile, const int ztile);
 void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, const int zShrink);
-void autoFindBounds(tipsy* tipsyIn);
+void tipsyTesselate(tipsy* tipsyIn, const int xTile, const int yTile, const int zTile);
+void tipsyTranslate(tipsy* tipsyIn, const float xShift, const float yShift, const float zShift);
 
 // tileStructEdit.c
-tipsy* createTipsy(const double simtime, const int nsph, const int ndark, const int nstar);
+tipsy* tipsyCreate(const double simtime, const int nsph, const int ndark, const int nstar);
 tipsy* tipsyClone(tipsy* tipsyIn);
-
+void tipsyExtend(tipsy* tipsyIn, const int nNewSPH, const int nNewDark, const int nNewStar);
 
 // tileFileIO.c
 tipsy* readTipsyStd(const char filename[]);
 int writeTipsyStd(const char filename[], tipsy* tipsyOut);
 
+// tileUtils.c
+void autoFindBounds(tipsy* tipsyIn);
+void tipsySetDefaults(tipsy* tipsyIn);
+
 // tileMisc.c
 void errorCase(const int errorCode);
+void warnCase(const int warningCode);
+
 int swapEndianInt(const int valIn);
 double swapEndianDouble(const double valIn);
 float swapEndianFloat(const float valIn);

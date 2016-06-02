@@ -1,5 +1,5 @@
-tile: tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileMisc.o tile.h
-	gcc -o tile tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileMisc.o
+tile: tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o tile.h
+	gcc -o tile tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o
 
 tile.o: tile.c tile.h
 	gcc -c tile.c
@@ -12,6 +12,9 @@ tileStructEdit.o: tileStructEdit.c tile.h
 
 tileFileIO.o: tileFileIO.c tile.h
 	gcc -c tileFileIO.c
+
+tileUtils.o: tileUtils.c tile.h
+	gcc -c tileUtils.c
 
 tileMisc.o: tileMisc.c tile.h
 	gcc -c tileMisc.c

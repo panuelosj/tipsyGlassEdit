@@ -27,7 +27,10 @@ int main(){
 
     printf("p0:\n");
     printGas(&glassIn->gas[0]);
-    tipsy* compressed = tipsyCompress(glassIn, 2, 3, 1);
+    tipsy* compressed = tipsyClone(glassIn);
+    tipsyScaleShrink(compressed, 2, 3, 1);
+    tipsyTesselate(compressed, 2, 3, 1);
+    tipsyCenter(compressed);
     printGas(&compressed->gas[0]);
     printf("%f-%f, %f-%f, %f-%f\n", compressed->attr->xmin, compressed->attr->xmax, compressed->attr->ymin, compressed->attr->ymax, compressed->attr->zmin, compressed->attr->zmax);
     writeTipsyStd("glass16.std.cpy", compressed);

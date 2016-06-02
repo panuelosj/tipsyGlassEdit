@@ -6,10 +6,17 @@
 #include "tile.h"
 
 
-//=============================================================================
-//-------------------------ERROR-CASE------------------------------------------
-//=============================================================================
+/*
+######## ########  ########   #######  ########   ######
+##       ##     ## ##     ## ##     ## ##     ## ##    ##
+##       ##     ## ##     ## ##     ## ##     ## ##
+######   ########  ########  ##     ## ########   ######
+##       ##   ##   ##   ##   ##     ## ##   ##         ##
+##       ##    ##  ##    ##  ##     ## ##    ##  ##    ##
+######## ##     ## ##     ##  #######  ##     ##  ######
+*/
 void errorCase(const int errorCode){
+	/* Prints error message and stops the program.*/
 	system("cat nagato");
 	switch (errorCode){
 		case ERR_MALLOC_FAIL:
@@ -23,10 +30,26 @@ void errorCase(const int errorCode){
 			exit(-1);
 	}
 }
+void warnCase(const int warningCode){
+	/* Prints a warning; program will continue.*/
+	switch (warningCode){
+		case WARN_REALLOC_SHRINK:
+			printf("Warning: Reallocating to a smaller space, values ULINE_START may ULINE_END be lost\n");
+		case WARN_REALLOC_DATA_LOSS:
+			printf("Warning: Reallocating to a smaller space, excess values are known to exist and ULINE_START WILL ULINE_END be lost\n");
+	}
+	printf("\tProgram will continue\n");
+}
 
-//=============================================================================
-//-------------------------ENDIAN-SWAPS----------------------------------------
-//=============================================================================
+/*
+######## ##    ## ########  ####    ###    ##    ##     ######  ##      ##    ###    ########   ######
+##       ###   ## ##     ##  ##    ## ##   ###   ##    ##    ## ##  ##  ##   ## ##   ##     ## ##    ##
+##       ####  ## ##     ##  ##   ##   ##  ####  ##    ##       ##  ##  ##  ##   ##  ##     ## ##
+######   ## ## ## ##     ##  ##  ##     ## ## ## ##     ######  ##  ##  ## ##     ## ########   ######
+##       ##  #### ##     ##  ##  ######### ##  ####          ## ##  ##  ## ######### ##              ##
+##       ##   ### ##     ##  ##  ##     ## ##   ###    ##    ## ##  ##  ## ##     ## ##        ##    ##
+######## ##    ## ########  #### ##     ## ##    ##     ######   ###  ###  ##     ## ##         ######
+*/
 float swapEndianFloat(const float valIn){
     float valOut;
     char *swapIn = (char*)&valIn;

@@ -5,40 +5,40 @@
 #include <math.h>
 #include "tile.h"
 
+/*
+ ######  ######## ##    ## ######## ######## ########
+##    ## ##       ###   ##    ##    ##       ##     ##
+##       ##       ####  ##    ##    ##       ##     ##
+##       ######   ## ## ##    ##    ######   ########
+##       ##       ##  ####    ##    ##       ##   ##
+##    ## ##       ##   ###    ##    ##       ##    ##
+ ######  ######## ##    ##    ##    ######## ##     ##
+*/
+void tipsyCenter(tipsy* tipsyIn){
+    /* Automatically calculates the center of the tipsy simulation box according
+        to _min/_max and shifts the simulation box to have it centered at
+        (0,0,0).
 
-tipsy* tipsyCompress(tipsy* tipsyIn, const float xCompress, const float yCompress, const float zCompress){
-    // Indexing Variables
+        Parameters:
+            tipsy* tipsyIn      - pointer to the tipsy struct to center
+    */
+
     int i;
-
-    int totalCompress = xCompress*yCompress*zCompress;
-    tipsy* tipsyTileCompressed = createTipsy(0,
-        tipsyIn->header->nsph,
-        tipsyIn->header->ndark,
-        tipsyIn->header->nstar);
-    tipsy* tipsyOut = createTipsy(0,
-        tipsyIn->header->nsph * totalCompress,
-        tipsyIn->header->ndark * totalCompress,
-        tipsyIn->header->nstar * totalCompress);
-    tipsyTileCompressed->attr->xmin = tipsyIn->attr->xmin;
-    tipsyTileCompressed->attr->xmax = tipsyIn->attr->xmax;
-    tipsyTileCompressed->attr->ymin = tipsyIn->attr->ymin;
-    tipsyTileCompressed->attr->ymax = tipsyIn->attr->ymax;
-    tipsyTileCompressed->attr->zmin = tipsyIn->attr->zmin;
-    tipsyTileCompressed->attr->zmax = tipsyIn->attr->zmax;
-    // Copy all gas particles
-    memcpy(tipsyTileCompressed->gas, tipsyIn->gas, tipsyIn->header->nsph*sizeof(gas_particle));
-    // Copy all dark particles
-    memcpy(tipsyTileCompressed->dark, tipsyIn->dark, tipsyIn->header->ndark*sizeof(dark_particle));
-    // Copy all star particles
-    memcpy(tipsyTileCompressed->star, tipsyIn->star, tipsyIn->header->nstar*sizeof(star_particle));
-    tipsyScaleShrink(tipsyTileCompressed, 2, 3, 1);
-    return tipsyTileCompressed;
+    const float xCenter = (tipsyIn->attr->xmax + tipsyIn->attr->xmin)/2.0;
+    const float yCenter = (tipsyIn->attr->ymax + tipsyIn->attr->ymin)/2.0;
+    const float zCenter = (tipsyIn->attr->zmax + tipsyIn->attr->zmin)/2.0;
+    tipsyTranslate(tipsyIn, -1.0*xCenter, -1.0*yCenter, -1.0*zCenter);
 }
 
-void tipsyTesselate(tipsy* tipsyIn, const int xTile, const int yTile, const int ztile){
-
-}
-
+/*
+ ######   ######     ###    ##       ########
+##    ## ##    ##   ## ##   ##       ##
+##       ##        ##   ##  ##       ##
+ ######  ##       ##     ## ##       ######
+      ## ##       ######### ##       ##
+##    ## ##    ## ##     ## ##       ##
+ ######   ######  ##     ## ######## ########
+*/
 void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, const int zShrink){
     /* Shrinks the tipsy object in each dimension by the given scaling factors
         by dividing by that value. For consistency with other functions, only
@@ -54,10 +54,8 @@ void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, cons
             void
     */
 
-    // Indexing Variables
-    int i;
-    // Float casts
-    const float xShrinkF = (float) xShrink;
+    int i;                                                                      // indexing variables
+    const float xShrinkF = (float) xShrink;                                     // float casts
     const float yShrinkF = (float) yShrink;
     const float zShrinkF = (float) zShrink;
 
@@ -84,77 +82,156 @@ void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, cons
     tipsyIn->attr->zmin /= zShrinkF; tipsyIn->attr->zmax /= zShrinkF;
 }
 
-//=============================================================================
-//-------------------------COMPARISONS-----------------------------------------
-//=============================================================================
+/*
+######## ########  ######   ######  ######## ##          ###    ######## ########
+   ##    ##       ##    ## ##    ## ##       ##         ## ##      ##    ##
+   ##    ##       ##       ##       ##       ##        ##   ##     ##    ##
+   ##    ######    ######   ######  ######   ##       ##     ##    ##    ######
+   ##    ##             ##       ## ##       ##       #########    ##    ##
+   ##    ##       ##    ## ##    ## ##       ##       ##     ##    ##    ##
+   ##    ########  ######   ######  ######## ######## ##     ##    ##    ########
+*/
+void tipsyTesselate(tipsy* tipsyIn, const int xTile, const int yTile, const int zTile){
+    /* Tesselates (tile) the tipsy object across each axis, copying over the
+        positive axis directions. This will automatically extend (realloc) the
+        input tipsy struct to fit the larger tiled tipsy.
+       The code currently tesselates by first duplicating the existing particles
+        using memcpy, then shifting the relevant copied indices. This is
+        repeated using the newly extended tipsy in each direction. Another
+        method could be to use a clone of the original as a tiling unit,
+        shifting that and copying the shifted clone unit to the original tipsyIn
+        thereby tesselating it. This would use more memory for the cloned unit,
+        which would also need to be freed later, and would likely not be any
+        faster, since the current method copies the finished product of the last
+        axis copy (ie, the lengthened x is copied when copying over the y-axis,
+        and the xy sheet is copied over the z-axis)
 
-void autoFindBounds(tipsy* tipsyIn){
-    // Indexing variables
-    int i=0;
-    // Set initial max and min based on the first particle
-    if (tipsyIn->header->nsph != 0) {
-        tipsyIn->attr->xmin = tipsyIn->gas[i].pos[AXIS_X];
-        tipsyIn->attr->xmax = tipsyIn->gas[i].pos[AXIS_X];
-        tipsyIn->attr->ymin = tipsyIn->gas[i].pos[AXIS_Y];
-        tipsyIn->attr->ymax = tipsyIn->gas[i].pos[AXIS_Y];
-        tipsyIn->attr->zmin = tipsyIn->gas[i].pos[AXIS_Z];
-        tipsyIn->attr->zmax = tipsyIn->gas[i].pos[AXIS_Z];
-    } else if (tipsyIn->header->ndark != 0) {
-        tipsyIn->attr->xmin = tipsyIn->gas[i].pos[AXIS_X];
-        tipsyIn->attr->xmax = tipsyIn->gas[i].pos[AXIS_X];
-        tipsyIn->attr->ymin = tipsyIn->gas[i].pos[AXIS_Y];
-        tipsyIn->attr->ymax = tipsyIn->gas[i].pos[AXIS_Y];
-        tipsyIn->attr->zmin = tipsyIn->gas[i].pos[AXIS_Z];
-        tipsyIn->attr->zmax = tipsyIn->gas[i].pos[AXIS_Z];
-    } else if (tipsyIn->header->nstar != 0) {
-        tipsyIn->attr->xmin = tipsyIn->star[i].pos[AXIS_X];
-        tipsyIn->attr->xmax = tipsyIn->star[i].pos[AXIS_X];
-        tipsyIn->attr->ymin = tipsyIn->star[i].pos[AXIS_Y];
-        tipsyIn->attr->ymax = tipsyIn->star[i].pos[AXIS_Y];
-        tipsyIn->attr->zmin = tipsyIn->star[i].pos[AXIS_Z];
-        tipsyIn->attr->zmax = tipsyIn->star[i].pos[AXIS_Z];
-    } else errorCase(ERR_NO_PARTICLES);
-    // Find max min that changes
-    for (i=1; i<tipsyIn->header->nsph; i++){
-        if (tipsyIn->gas[i].pos[AXIS_X] < tipsyIn->attr->xmin)
-            tipsyIn->attr->xmin = tipsyIn->gas[i].pos[AXIS_X];
-        else if (tipsyIn->gas[i].pos[AXIS_X] > tipsyIn->attr->xmax)
-            tipsyIn->attr->xmax = tipsyIn->gas[i].pos[AXIS_X];
-        if (tipsyIn->gas[i].pos[AXIS_Y] < tipsyIn->attr->ymin)
-            tipsyIn->attr->ymin = tipsyIn->gas[i].pos[AXIS_Y];
-        else if (tipsyIn->gas[i].pos[AXIS_Y] > tipsyIn->attr->ymax)
-            tipsyIn->attr->ymax = tipsyIn->gas[i].pos[AXIS_Y];
-        if (tipsyIn->gas[i].pos[AXIS_Z] < tipsyIn->attr->zmin)
-            tipsyIn->attr->zmin = tipsyIn->gas[i].pos[AXIS_Z];
-        else if (tipsyIn->gas[i].pos[AXIS_Z] > tipsyIn->attr->zmax)
-            tipsyIn->attr->zmax = tipsyIn->gas[i].pos[AXIS_Z];
+        Parameters:
+            tipsy* tipsyIn      - pointer to the tipsy struct to be tiled
+            const int xTile     - number of units of the original copied over x axis
+            const int yTile     - number of units of the original copied over y axis
+            const int zTile     - number of units of the original copied over z axis
+
+        ToDo:
+            add check to see if tipsyIn is full (ie n_=nloaded_);
+                currently assumes tipsyIn is full and uses n_ values
+    */
+
+    int i, j;                                                                   // indexing variables
+    const int nTile = xTile*yTile*zTile;                                        // total number of tiling units in the final product
+    const float xWidth = tipsyIn->attr->xmax - tipsyIn->attr->xmin;             // total width of the tipsy sim box
+    const float yWidth = tipsyIn->attr->ymax - tipsyIn->attr->ymin;
+    const float zWidth = tipsyIn->attr->zmax - tipsyIn->attr->zmin;
+
+    // Allocate enough memory for the particles to be copied
+    tipsyExtend(tipsyIn, tipsyIn->header->nsph*nTile, tipsyIn->header->ndark*nTile, tipsyIn->header->nstar*nTile);
+
+    // Duplicate over x axis
+    for (j=1; j < xTile; j++){
+        // For each tile repeat stated in xTile, duplicate the memory into the right location
+        memcpy(&tipsyIn->gas[j*tipsyIn->attr->nloadedsph], &tipsyIn->gas[0], tipsyIn->attr->nloadedsph*sizeof(gas_particle));
+        memcpy(&tipsyIn->dark[j*tipsyIn->attr->nloadeddark], &tipsyIn->dark[0], tipsyIn->attr->nloadeddark*sizeof(dark_particle));
+        memcpy(&tipsyIn->star[j*tipsyIn->attr->nloadedstar], &tipsyIn->star[0], tipsyIn->attr->nloadedstar*sizeof(star_particle));
+        // Shift all particles over based on the integer multiple of tile width
+        for (i=j*tipsyIn->attr->nloadedsph; i < (j+1)*tipsyIn->attr->nloadedsph; i++)
+            tipsyIn->gas[i].pos[AXIS_X] += (float)j*xWidth;
+        for (i=j*tipsyIn->attr->nloadeddark; i < (j+1)*tipsyIn->attr->nloadeddark; i++)
+            tipsyIn->dark[i].pos[AXIS_X] += (float)j*xWidth;
+        for (i=j*tipsyIn->attr->nloadedstar; i < (j+1)*tipsyIn->attr->nloadedstar; i++)
+            tipsyIn->star[i].pos[AXIS_X] += (float)j*xWidth;
     }
-    for (i=1; i<tipsyIn->header->ndark; i++){
-        if (tipsyIn->dark[i].pos[AXIS_X] < tipsyIn->attr->xmin)
-            tipsyIn->attr->xmin = tipsyIn->dark[i].pos[AXIS_X];
-        else if (tipsyIn->dark[i].pos[AXIS_X] > tipsyIn->attr->xmax)
-            tipsyIn->attr->xmax = tipsyIn->dark[i].pos[AXIS_X];
-        if (tipsyIn->dark[i].pos[AXIS_Y] < tipsyIn->attr->ymin)
-            tipsyIn->attr->ymin = tipsyIn->dark[i].pos[AXIS_Y];
-        else if (tipsyIn->dark[i].pos[AXIS_Y] > tipsyIn->attr->ymax)
-            tipsyIn->attr->ymax = tipsyIn->dark[i].pos[AXIS_Y];
-        if (tipsyIn->dark[i].pos[AXIS_Z] < tipsyIn->attr->zmin)
-            tipsyIn->attr->zmin = tipsyIn->dark[i].pos[AXIS_Z];
-        else if (tipsyIn->dark[i].pos[AXIS_Z] > tipsyIn->attr->zmax)
-            tipsyIn->attr->zmax = tipsyIn->dark[i].pos[AXIS_Z];
+    // Update the number of loaded particles
+    tipsyIn->attr->nloadedsph *= xTile;
+    tipsyIn->attr->nloadeddark *= xTile;
+    tipsyIn->attr->nloadedstar *= xTile;
+
+    // Duplicate over y axis
+    for (j=1; j < yTile; j++){
+        // For each tile repeat stated in xTile, duplicate the memory into the right location
+        memcpy(&tipsyIn->gas[j*tipsyIn->attr->nloadedsph], &tipsyIn->gas[0], tipsyIn->attr->nloadedsph*sizeof(gas_particle));
+        memcpy(&tipsyIn->dark[j*tipsyIn->attr->nloadeddark], &tipsyIn->dark[0], tipsyIn->attr->nloadeddark*sizeof(dark_particle));
+        memcpy(&tipsyIn->star[j*tipsyIn->attr->nloadedstar], &tipsyIn->star[0], tipsyIn->attr->nloadedstar*sizeof(star_particle));
+        // Shift all particles over based on the integer multiple of tile width
+        for (i=j*tipsyIn->attr->nloadedsph; i < (j+1)*tipsyIn->attr->nloadedsph; i++)
+            tipsyIn->gas[i].pos[AXIS_Y] += (float)j*yWidth;
+        for (i=j*tipsyIn->attr->nloadeddark; i < (j+1)*tipsyIn->attr->nloadeddark; i++)
+            tipsyIn->dark[i].pos[AXIS_Y] += (float)j*yWidth;
+        for (i=j*tipsyIn->attr->nloadedstar; i < (j+1)*tipsyIn->attr->nloadedstar; i++)
+            tipsyIn->star[i].pos[AXIS_Y] += (float)j*yWidth;
     }
-    for (i=1; i<tipsyIn->header->nstar; i++){
-        if (tipsyIn->star[i].pos[AXIS_X] < tipsyIn->attr->xmin)
-            tipsyIn->attr->xmin = tipsyIn->star[i].pos[AXIS_X];
-        else if (tipsyIn->star[i].pos[AXIS_X] > tipsyIn->attr->xmax)
-            tipsyIn->attr->xmax = tipsyIn->star[i].pos[AXIS_X];
-        if (tipsyIn->star[i].pos[AXIS_Y] < tipsyIn->attr->ymin)
-            tipsyIn->attr->ymin = tipsyIn->star[i].pos[AXIS_Y];
-        else if (tipsyIn->star[i].pos[AXIS_Y] > tipsyIn->attr->ymax)
-            tipsyIn->attr->ymax = tipsyIn->star[i].pos[AXIS_Y];
-        if (tipsyIn->star[i].pos[AXIS_Z] < tipsyIn->attr->zmin)
-            tipsyIn->attr->zmin = tipsyIn->star[i].pos[AXIS_Z];
-        else if (tipsyIn->star[i].pos[AXIS_Z] > tipsyIn->attr->zmax)
-            tipsyIn->attr->zmax = tipsyIn->star[i].pos[AXIS_Z];
+    // Update the number of loaded particles
+    tipsyIn->attr->nloadedsph *= yTile;
+    tipsyIn->attr->nloadeddark *= yTile;
+    tipsyIn->attr->nloadedstar *= yTile;
+
+    // Duplicate over z axis
+    for (j=1; j < zTile; j++){
+        // For each tile repeat stated in xTile, duplicate the memory into the right location
+        memcpy(&tipsyIn->gas[j*tipsyIn->attr->nloadedsph], &tipsyIn->gas[0], tipsyIn->attr->nloadedsph*sizeof(gas_particle));
+        memcpy(&tipsyIn->dark[j*tipsyIn->attr->nloadeddark], &tipsyIn->dark[0], tipsyIn->attr->nloadeddark*sizeof(dark_particle));
+        memcpy(&tipsyIn->star[j*tipsyIn->attr->nloadedstar], &tipsyIn->star[0], tipsyIn->attr->nloadedstar*sizeof(star_particle));
+        // Shift all particles over based on the integer multiple of tile width
+        for (i=j*tipsyIn->attr->nloadedsph; i < (j+1)*tipsyIn->attr->nloadedsph; i++)
+            tipsyIn->gas[i].pos[AXIS_Z] += (float)j*zWidth;
+        for (i=j*tipsyIn->attr->nloadeddark; i < (j+1)*tipsyIn->attr->nloadeddark; i++)
+            tipsyIn->dark[i].pos[AXIS_Z] += (float)j*zWidth;
+        for (i=j*tipsyIn->attr->nloadedstar; i < (j+1)*tipsyIn->attr->nloadedstar; i++)
+            tipsyIn->star[i].pos[AXIS_Z] += (float)j*zWidth;
     }
+    // Update the number of loaded particles
+    tipsyIn->attr->nloadedsph *= zTile;
+    tipsyIn->attr->nloadeddark *= zTile;
+    tipsyIn->attr->nloadedstar *= zTile;
+
+    // Update boundaries
+    tipsyIn->attr->xmax += (xTile-1)*xWidth;
+    tipsyIn->attr->ymax += (yTile-1)*yWidth;
+    tipsyIn->attr->zmax += (zTile-1)*zWidth;
+}
+
+/*
+######## ########     ###    ##    ##  ######  ##          ###    ######## ########
+   ##    ##     ##   ## ##   ###   ## ##    ## ##         ## ##      ##    ##
+   ##    ##     ##  ##   ##  ####  ## ##       ##        ##   ##     ##    ##
+   ##    ########  ##     ## ## ## ##  ######  ##       ##     ##    ##    ######
+   ##    ##   ##   ######### ##  ####       ## ##       #########    ##    ##
+   ##    ##    ##  ##     ## ##   ### ##    ## ##       ##     ##    ##    ##
+   ##    ##     ## ##     ## ##    ##  ######  ######## ##     ##    ##    ########
+*/
+void tipsyTranslate(tipsy* tipsyIn, const float xShift, const float yShift, const float zShift){
+    /* Translates (shifts) the tipsy object across each axis, moving the
+        particle position values according to the input parameters. A positive
+        _Shift value will move the particles in the positive axis direction and
+        a negative value will move them in the negative axis direction.
+
+        Parameters:
+            tipsy* tipsyIn      - pointer to the tipsy struct to be tiled
+            const float xShift  - amount to translate the particles by in the x axis
+            const float yShift  - amount to translate the particles by in the y axis
+            const float zShift  - amount to translate the particles by in the z axis
+
+        ToDo:
+    */
+
+    int i;                                                                      // indexing variables
+    // Shift each particle type
+    for (i=0; i < tipsyIn->attr->nloadedsph; i++){
+        tipsyIn->gas[i].pos[AXIS_X] += xShift;
+        tipsyIn->gas[i].pos[AXIS_Y] += yShift;
+        tipsyIn->gas[i].pos[AXIS_Z] += zShift;
+    }
+    for (i=0; i < tipsyIn->attr->nloadeddark; i++){
+        tipsyIn->dark[i].pos[AXIS_X] += xShift;
+        tipsyIn->dark[i].pos[AXIS_Y] += yShift;
+        tipsyIn->dark[i].pos[AXIS_Z] += zShift;
+    }
+    for (i=0; i < tipsyIn->attr->nloadedstar; i++){
+        tipsyIn->star[i].pos[AXIS_X] += xShift;
+        tipsyIn->star[i].pos[AXIS_Y] += yShift;
+        tipsyIn->star[i].pos[AXIS_Z] += zShift;
+    }
+    // Update the box boundaries
+    tipsyIn->attr->xmin += xShift; tipsyIn->attr->xmax += xShift;
+    tipsyIn->attr->ymin += yShift; tipsyIn->attr->ymax += yShift;
+    tipsyIn->attr->zmin += zShift; tipsyIn->attr->zmax += zShift;
 }
