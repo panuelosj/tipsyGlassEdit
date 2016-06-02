@@ -23,7 +23,6 @@ void tipsyCenter(tipsy* tipsyIn){
             tipsy* tipsyIn      - pointer to the tipsy struct to center
     */
 
-    int i;
     const float xCenter = (tipsyIn->attr->xmax + tipsyIn->attr->xmin)/2.0;
     const float yCenter = (tipsyIn->attr->ymax + tipsyIn->attr->ymin)/2.0;
     const float zCenter = (tipsyIn->attr->zmax + tipsyIn->attr->zmin)/2.0;

@@ -11,8 +11,6 @@
 //=============================================================================
 
 int main(){
-    // Indexing Variables
-    int i,j,k;
     // Read in the input glass
     char filename[100] = "glass.std";
     printf("Reading: %s\n", filename);

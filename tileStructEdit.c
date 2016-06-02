@@ -26,10 +26,10 @@ tipsy* tipsyCreate(const double simtime, const int nsph, const int ndark, const 
     */
 
     // Create object (pointer to a struct of pointers to memory)
-    tipsy* tipsyOut = malloc(sizeof(tipsy));
+    tipsy* tipsyOut = (tipsy*)malloc(sizeof(tipsy));
 
     // Allocate and create header
-    tipsyOut->header = malloc(sizeof(header));
+    tipsyOut->header = (header*)malloc(sizeof(header));
     tipsyOut->header->simtime = simtime;
     tipsyOut->header->nbodies = nsph + ndark + nstar;
     tipsyOut->header->ndim = 3;
@@ -40,17 +40,17 @@ tipsy* tipsyCreate(const double simtime, const int nsph, const int ndark, const 
 
     // Allocate space for particles
     if (tipsyOut->header->nsph != 0){
-        tipsyOut->gas = malloc(tipsyOut->header->nsph*sizeof(gas_particle));
+        tipsyOut->gas = (gas_particle*)malloc(tipsyOut->header->nsph*sizeof(gas_particle));
     } else tipsyOut->gas = NULL;
     if (tipsyOut->header->ndark != 0){
-        tipsyOut->dark = malloc(tipsyOut->header->ndark*sizeof(dark_particle));
+        tipsyOut->dark = (dark_particle*)malloc(tipsyOut->header->ndark*sizeof(dark_particle));
     } else tipsyOut->dark = NULL;
     if (tipsyOut->header->nstar != 0){
-        tipsyOut->star = malloc(tipsyOut->header->nstar*sizeof(star_particle));
+        tipsyOut->star = (star_particle*)malloc(tipsyOut->header->nstar*sizeof(star_particle));
     } else tipsyOut->star = NULL;
 
     // Allocate and define object attributes
-    tipsyOut->attr = malloc(sizeof(attributes));
+    tipsyOut->attr = (attributes*)malloc(sizeof(attributes));
     tipsyOut->attr->nloadedsph = 0;
     tipsyOut->attr->nloadeddark = 0;
     tipsyOut->attr->nloadedstar = 0;
@@ -105,8 +105,6 @@ tipsy* tipsyClone(tipsy* tipsyIn){
             to the input tipsy
     */
 
-    // Indexing Variables
-    int i;
     // Create new tipsy object
     tipsy* tipsyOut = tipsyCreate(tipsyIn->header->simtime, tipsyIn->header->nsph, tipsyIn->header->ndark, tipsyIn->header->nstar);
     // Copy header, gas, dark, and star particles, and attributes
@@ -158,9 +156,9 @@ void tipsyExtend(tipsy* tipsyIn, const int nNewSPH, const int nNewDark, const in
         warnCase(WARN_REALLOC_SHRINK);
 
     // Do reallocations
-    tipsyIn->gas = realloc(tipsyIn->gas, nNewSPH*sizeof(gas_particle));
-    tipsyIn->dark = realloc(tipsyIn->dark, nNewDark*sizeof(dark_particle));
-    tipsyIn->star = realloc(tipsyIn->star, nNewStar*sizeof(star_particle));
+    tipsyIn->gas = (gas_particle*)realloc(tipsyIn->gas, nNewSPH*sizeof(gas_particle));
+    tipsyIn->dark = (dark_particle*)realloc(tipsyIn->dark, nNewDark*sizeof(dark_particle));
+    tipsyIn->star = (star_particle*)realloc(tipsyIn->star, nNewStar*sizeof(star_particle));
 
     // Change size in header
     tipsyIn->header->nsph = nNewSPH;
@@ -201,8 +199,7 @@ tipsy* tipsyJoin(tipsy* tipsy1, tipsy* tipsy2){
                 copies them directly, even if some particle values are
                 unitialized
     */
-
-    int i;                                                                      // indexing variables
+                                                                   // indexing variables
     const int nsph = tipsy1->header->nsph + tipsy2->header->nsph;
     const int ndark = tipsy1->header->ndark + tipsy2->header->ndark;
     const int nstar = tipsy1->header->nstar + tipsy2->header->nstar;

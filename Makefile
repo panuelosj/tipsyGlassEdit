@@ -1,6 +1,14 @@
 tile: tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o tile.h
 	gcc -o tile tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o
 
+# Random Utils
+tipsyPrintRho: tipsyPrintRho.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o tile.h
+	gcc -o tipsyPrintRho tipsyPrintRho.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o
+
+tipsyPrintRho.o: tipsyPrintRho.c tile.h
+	gcc -c ./tipsyPrintRho.c
+
+# Functions
 tile.o: tile.c tile.h
 	gcc -c tile.c
 
