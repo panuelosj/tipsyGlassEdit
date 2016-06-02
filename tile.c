@@ -59,4 +59,6 @@ int main(){
     printf("=================================================\n");
     writeTipsyStd("sodShocktube.std", sodShocktube);
 
+    // Cleanup
+    tipsyDestroy(glassIn); tipsyDestroy(glass8f); tipsyDestroy(glass8x); tipsyDestroy(sodShocktube);
 }
