@@ -20,7 +20,7 @@ int main(){
     glassIn->attr->ymin = -0.5; glassIn->attr->ymax = 0.5;
     glassIn->attr->zmin = -0.5; glassIn->attr->zmax = 0.5;
     printf("Input ");
-    printHeader(glassIn->header);
+    printHeader(glassIn->head);
     printAttr(glassIn->attr);
     printf("=================================================\n");
 
@@ -30,7 +30,7 @@ int main(){
     tipsyScaleShrink(glass8x, 2, 2, 2);
     tipsyTesselate(glass8x, 2, 2, 2);
     tipsyCenter(glass8x);
-    printHeader(glass8x->header);
+    printHeader(glass8x->head);
     printAttr(glass8x->attr);
     printf("=================================================\n");
     writeTipsyStd("glass8x.std", glass8x);
@@ -40,7 +40,7 @@ int main(){
     tipsy* glass8f = tipsyClone(glassIn);
     tipsyScaleExpand(glass8f, 2, 2, 2);
     tipsyCenter(glass8f);
-    printHeader(glass8f->header);
+    printHeader(glass8f->head);
     printAttr(glass8f->attr);
     printf("=================================================\n");
     writeTipsyStd("glass8f.std", glass8f);
@@ -52,7 +52,7 @@ int main(){
     tipsyTesselate(glassIn, 14, 2, 2);          // creates 14x2x2
     tipsyTranslate(glassIn, -13.5, -0.5, -0.5); // pushes the high density to the negative x axis
     tipsy* sodShocktube = tipsyJoin(glassIn, glass8f);
-    printHeader(sodShocktube->header);
+    printHeader(sodShocktube->head);
     printAttr(sodShocktube->attr);
     printf("=================================================\n");
     writeTipsyStd("sodShocktube.std", sodShocktube);

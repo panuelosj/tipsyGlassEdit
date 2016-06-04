@@ -12,11 +12,11 @@ int main(int argc, char *argv[]){
     printf("Reading: %s\n", argv[1]);
     tipsy* glassIn = readTipsyStd(argv[1]);
     printf("Input ");
-    printHeader(glassIn->header);
+    printHeader(glassIn->head);
     printAttr(glassIn->attr);
     printf("=================================================\n");
 
-    for(i=0; i < glassIn->header->nsph; i++){
+    for(i=0; i < glassIn->head->nsph; i++){
         for(j=0; j<10; j++){
             printf("%f, ", glassIn->gas[i].rho);
         }

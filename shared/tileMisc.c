@@ -122,12 +122,12 @@ double swapEndianDouble(const double valIn){
 }
 void swapEndianBatch(const tipsy* tipsyIn, const int type, const int i){
     if (type == TYPE_HEADER) {
-        tipsyIn->header->simtime = swapEndianDouble(tipsyIn->header->simtime);
-        tipsyIn->header->nbodies = swapEndianInt(tipsyIn->header->nbodies);
-        tipsyIn->header->ndim = swapEndianInt(tipsyIn->header->ndim);
-        tipsyIn->header->nsph = swapEndianInt(tipsyIn->header->nsph);
-        tipsyIn->header->ndark = swapEndianInt(tipsyIn->header->ndark);
-        tipsyIn->header->nstar = swapEndianInt(tipsyIn->header->nstar);
+        tipsyIn->head->simtime = swapEndianDouble(tipsyIn->head->simtime);
+        tipsyIn->head->nbodies = swapEndianInt(tipsyIn->head->nbodies);
+        tipsyIn->head->ndim = swapEndianInt(tipsyIn->head->ndim);
+        tipsyIn->head->nsph = swapEndianInt(tipsyIn->head->nsph);
+        tipsyIn->head->ndark = swapEndianInt(tipsyIn->head->ndark);
+        tipsyIn->head->nstar = swapEndianInt(tipsyIn->head->nstar);
     } else if (type == TYPE_GAS) {
         tipsyIn->gas[i].mass = swapEndianFloat(tipsyIn->gas[i].mass);
         tipsyIn->gas[i].pos[0] = swapEndianFloat(tipsyIn->gas[i].pos[0]);

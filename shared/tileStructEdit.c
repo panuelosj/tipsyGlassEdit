@@ -29,24 +29,24 @@ tipsy* tipsyCreate(const double simtime, const int nsph, const int ndark, const 
     tipsy* tipsyOut = (tipsy*)malloc(sizeof(tipsy));
 
     // Allocate and create header
-    tipsyOut->header = (header*)malloc(sizeof(header));
-    tipsyOut->header->simtime = simtime;
-    tipsyOut->header->nbodies = nsph + ndark + nstar;
-    tipsyOut->header->ndim = 3;
-    tipsyOut->header->nsph = nsph;
-    tipsyOut->header->ndark = ndark;
-    tipsyOut->header->nstar = nstar;
-    tipsyOut->header->pad = 0;
+    tipsyOut->head = (header*)malloc(sizeof(header));
+    tipsyOut->head->simtime = simtime;
+    tipsyOut->head->nbodies = nsph + ndark + nstar;
+    tipsyOut->head->ndim = 3;
+    tipsyOut->head->nsph = nsph;
+    tipsyOut->head->ndark = ndark;
+    tipsyOut->head->nstar = nstar;
+    tipsyOut->head->pad = 0;
 
     // Allocate space for particles
-    if (tipsyOut->header->nsph != 0){
-        tipsyOut->gas = (gas_particle*)malloc(tipsyOut->header->nsph*sizeof(gas_particle));
+    if (tipsyOut->head->nsph != 0){
+        tipsyOut->gas = (gas_particle*)malloc(tipsyOut->head->nsph*sizeof(gas_particle));
     } else tipsyOut->gas = NULL;
-    if (tipsyOut->header->ndark != 0){
-        tipsyOut->dark = (dark_particle*)malloc(tipsyOut->header->ndark*sizeof(dark_particle));
+    if (tipsyOut->head->ndark != 0){
+        tipsyOut->dark = (dark_particle*)malloc(tipsyOut->head->ndark*sizeof(dark_particle));
     } else tipsyOut->dark = NULL;
-    if (tipsyOut->header->nstar != 0){
-        tipsyOut->star = (star_particle*)malloc(tipsyOut->header->nstar*sizeof(star_particle));
+    if (tipsyOut->head->nstar != 0){
+        tipsyOut->star = (star_particle*)malloc(tipsyOut->head->nstar*sizeof(star_particle));
     } else tipsyOut->star = NULL;
 
     // Allocate and define object attributes
@@ -74,7 +74,7 @@ void tipsyDestroy(tipsy* tipsyIn){
             tipsy* tipsyIn      - pointer to the tipsy struct to deallocate
     */
     // First deallocate all structs inside the tipsy struct
-    free(tipsyIn->header);
+    free(tipsyIn->head);
     free(tipsyIn->gas);
     free(tipsyIn->dark);
     free(tipsyIn->star);
@@ -106,12 +106,12 @@ tipsy* tipsyClone(tipsy* tipsyIn){
     */
 
     // Create new tipsy object
-    tipsy* tipsyOut = tipsyCreate(tipsyIn->header->simtime, tipsyIn->header->nsph, tipsyIn->header->ndark, tipsyIn->header->nstar);
+    tipsy* tipsyOut = tipsyCreate(tipsyIn->head->simtime, tipsyIn->head->nsph, tipsyIn->head->ndark, tipsyIn->head->nstar);
     // Copy header, gas, dark, and star particles, and attributes
-    memcpy(tipsyOut->header, tipsyIn->header, sizeof(header));
-    memcpy(tipsyOut->gas, tipsyIn->gas, tipsyIn->header->nsph * sizeof(gas_particle));
-    memcpy(tipsyOut->dark, tipsyIn->dark, tipsyIn->header->ndark * sizeof(dark_particle));
-    memcpy(tipsyOut->star, tipsyIn->star, tipsyIn->header->nstar * sizeof(star_particle));
+    memcpy(tipsyOut->head, tipsyIn->head, sizeof(header));
+    memcpy(tipsyOut->gas, tipsyIn->gas, tipsyIn->head->nsph * sizeof(gas_particle));
+    memcpy(tipsyOut->dark, tipsyIn->dark, tipsyIn->head->ndark * sizeof(dark_particle));
+    memcpy(tipsyOut->star, tipsyIn->star, tipsyIn->head->nstar * sizeof(star_particle));
     memcpy(tipsyOut->attr, tipsyIn->attr, sizeof(attributes));
 
     // Return pointer to new tipsy struct with the same values as the input struct
@@ -152,7 +152,7 @@ void tipsyExtend(tipsy* tipsyIn, const int nNewSPH, const int nNewDark, const in
     // Print warnings if new sizes are smaller than current sizes
     if ((nNewSPH < tipsyIn->attr->nloadedsph) || (nNewDark < tipsyIn->attr->nloadeddark) || (nNewStar < tipsyIn->attr->nloadedstar))
         warnCase(WARN_REALLOC_DATA_LOSS);
-    else if ((nNewSPH < tipsyIn->header->nsph) || (nNewDark < tipsyIn->header->ndark) || (nNewStar < tipsyIn->header->nstar))
+    else if ((nNewSPH < tipsyIn->head->nsph) || (nNewDark < tipsyIn->head->ndark) || (nNewStar < tipsyIn->head->nstar))
         warnCase(WARN_REALLOC_SHRINK);
 
     // Do reallocations
@@ -161,17 +161,17 @@ void tipsyExtend(tipsy* tipsyIn, const int nNewSPH, const int nNewDark, const in
     tipsyIn->star = (star_particle*)realloc(tipsyIn->star, nNewStar*sizeof(star_particle));
 
     // Change size in header
-    tipsyIn->header->nsph = nNewSPH;
-    tipsyIn->header->ndark = nNewDark;
-    tipsyIn->header->nstar = nNewStar;
-    tipsyIn->header->nbodies = nNewSPH + nNewDark + nNewStar;
+    tipsyIn->head->nsph = nNewSPH;
+    tipsyIn->head->ndark = nNewDark;
+    tipsyIn->head->nstar = nNewStar;
+    tipsyIn->head->nbodies = nNewSPH + nNewDark + nNewStar;
     // nloaded values in attr are changed only when data is known to be lost
-    if (tipsyIn->attr->nloadedsph > tipsyIn->header->nsph)
-        tipsyIn->attr->nloadedsph = tipsyIn->header->nsph;
-    if (tipsyIn->attr->nloadeddark > tipsyIn->header->ndark)
-        tipsyIn->attr->nloadeddark = tipsyIn->header->ndark;
-    if (tipsyIn->attr->nloadedstar > tipsyIn->header->nstar)
-        tipsyIn->attr->nloadedstar = tipsyIn->header->nstar;
+    if (tipsyIn->attr->nloadedsph > tipsyIn->head->nsph)
+        tipsyIn->attr->nloadedsph = tipsyIn->head->nsph;
+    if (tipsyIn->attr->nloadeddark > tipsyIn->head->ndark)
+        tipsyIn->attr->nloadeddark = tipsyIn->head->ndark;
+    if (tipsyIn->attr->nloadedstar > tipsyIn->head->nstar)
+        tipsyIn->attr->nloadedstar = tipsyIn->head->nstar;
 }
 
 /*
@@ -200,24 +200,24 @@ tipsy* tipsyJoin(tipsy* tipsy1, tipsy* tipsy2){
                 unitialized
     */
                                                                    // indexing variables
-    const int nsph = tipsy1->header->nsph + tipsy2->header->nsph;
-    const int ndark = tipsy1->header->ndark + tipsy2->header->ndark;
-    const int nstar = tipsy1->header->nstar + tipsy2->header->nstar;
+    const int nsph = tipsy1->head->nsph + tipsy2->head->nsph;
+    const int ndark = tipsy1->head->ndark + tipsy2->head->ndark;
+    const int nstar = tipsy1->head->nstar + tipsy2->head->nstar;
 
     // clone the first tipsy object (inputs the values)
     tipsy* tipsyOut = tipsyClone(tipsy1);
     // extend the clone to fit in the values from the second object
     tipsyExtend(tipsyOut, nsph, ndark, nstar);
     // copy the second object's values
-    memcpy(&tipsyOut->gas[tipsy1->header->nsph], &tipsy2->gas[0], tipsy2->header->nsph*sizeof(gas_particle));
-    memcpy(&tipsyOut->dark[tipsy1->header->ndark], &tipsy2->dark[0], tipsy2->header->ndark*sizeof(dark_particle));
-    memcpy(&tipsyOut->star[tipsy1->header->nstar], &tipsy2->star[0], tipsy2->header->nstar*sizeof(star_particle));
+    memcpy(&tipsyOut->gas[tipsy1->head->nsph], &tipsy2->gas[0], tipsy2->head->nsph*sizeof(gas_particle));
+    memcpy(&tipsyOut->dark[tipsy1->head->ndark], &tipsy2->dark[0], tipsy2->head->ndark*sizeof(dark_particle));
+    memcpy(&tipsyOut->star[tipsy1->head->nstar], &tipsy2->star[0], tipsy2->head->nstar*sizeof(star_particle));
 
     // update header values
-    tipsyOut->header->nsph = nsph;
-    tipsyOut->header->ndark = ndark;
-    tipsyOut->header->nstar = nstar;
-    tipsyOut->header->nbodies = nsph+ndark+nstar;
+    tipsyOut->head->nsph = nsph;
+    tipsyOut->head->ndark = ndark;
+    tipsyOut->head->nstar = nstar;
+    tipsyOut->head->nbodies = nsph+ndark+nstar;
     // update attributes, current attributes were inherited from tipsy1 when cloned
     if (tipsy2->attr->xmin < tipsyOut->attr->xmin)
         tipsyOut->attr->xmin = tipsy2->attr->xmin;

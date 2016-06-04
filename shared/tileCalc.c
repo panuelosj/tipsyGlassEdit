@@ -60,18 +60,18 @@ void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, cons
     const float totalShrinkF = xShrinkF * yShrinkF * zShrinkF;
 
     // Shrink each element's coordinates by the scaling factor given, update rho
-    for (i=0; i < tipsyIn->header->nsph; i++){
+    for (i=0; i < tipsyIn->head->nsph; i++){
         tipsyIn->gas[i].pos[AXIS_X] /= xShrinkF;
         tipsyIn->gas[i].pos[AXIS_Y] /= yShrinkF;
         tipsyIn->gas[i].pos[AXIS_Z] /= zShrinkF;
         tipsyIn->gas[i].rho *= totalShrinkF;
     }
-    for (i=0; i < tipsyIn->header->ndark; i++){
+    for (i=0; i < tipsyIn->head->ndark; i++){
         tipsyIn->dark[i].pos[AXIS_X] /= xShrinkF;
         tipsyIn->dark[i].pos[AXIS_Y] /= yShrinkF;
         tipsyIn->dark[i].pos[AXIS_Z] /= zShrinkF;
     }
-    for (i=0; i < tipsyIn->header->nstar; i++){
+    for (i=0; i < tipsyIn->head->nstar; i++){
         tipsyIn->star[i].pos[AXIS_X] /= xShrinkF;
         tipsyIn->star[i].pos[AXIS_Y] /= yShrinkF;
         tipsyIn->star[i].pos[AXIS_Z] /= zShrinkF;
@@ -103,18 +103,18 @@ void tipsyScaleExpand(tipsy* tipsyIn, const float xExpand, const float yExpand, 
     const float totalExpandF = xExpandF * yExpandF * zExpandF;
 
     // Expand each element's coordinates by the scaling factor given, update rho
-    for (i=0; i < tipsyIn->header->nsph; i++){
+    for (i=0; i < tipsyIn->head->nsph; i++){
         tipsyIn->gas[i].pos[AXIS_X] *= xExpandF;
         tipsyIn->gas[i].pos[AXIS_Y] *= yExpandF;
         tipsyIn->gas[i].pos[AXIS_Z] *= zExpandF;
         tipsyIn->gas[i].rho /= totalExpandF;
     }
-    for (i=0; i < tipsyIn->header->ndark; i++){
+    for (i=0; i < tipsyIn->head->ndark; i++){
         tipsyIn->dark[i].pos[AXIS_X] *= xExpandF;
         tipsyIn->dark[i].pos[AXIS_Y] *= yExpandF;
         tipsyIn->dark[i].pos[AXIS_Z] *= zExpandF;
     }
-    for (i=0; i < tipsyIn->header->nstar; i++){
+    for (i=0; i < tipsyIn->head->nstar; i++){
         tipsyIn->star[i].pos[AXIS_X] *= xExpandF;
         tipsyIn->star[i].pos[AXIS_Y] *= yExpandF;
         tipsyIn->star[i].pos[AXIS_Z] *= zExpandF;
@@ -168,7 +168,7 @@ void tipsyTesselate(tipsy* tipsyIn, const int xTile, const int yTile, const int 
     const float zWidth = tipsyIn->attr->zmax - tipsyIn->attr->zmin;
 
     // Allocate enough memory for the particles to be copied
-    tipsyExtend(tipsyIn, tipsyIn->header->nsph*nTile, tipsyIn->header->ndark*nTile, tipsyIn->header->nstar*nTile);
+    tipsyExtend(tipsyIn, tipsyIn->head->nsph*nTile, tipsyIn->head->ndark*nTile, tipsyIn->head->nstar*nTile);
 
     // Duplicate over x axis
     for (j=1; j < xTile; j++){

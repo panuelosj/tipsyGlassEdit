@@ -25,21 +25,21 @@ void autoFindBounds(tipsy* tipsyIn){
     // Indexing variables
     int i=0;
     // Set initial max and min based on the first particle
-    if (tipsyIn->header->nsph != 0) {
+    if (tipsyIn->head->nsph != 0) {
         tipsyIn->attr->xmin = tipsyIn->gas[i].pos[AXIS_X];
         tipsyIn->attr->xmax = tipsyIn->gas[i].pos[AXIS_X];
         tipsyIn->attr->ymin = tipsyIn->gas[i].pos[AXIS_Y];
         tipsyIn->attr->ymax = tipsyIn->gas[i].pos[AXIS_Y];
         tipsyIn->attr->zmin = tipsyIn->gas[i].pos[AXIS_Z];
         tipsyIn->attr->zmax = tipsyIn->gas[i].pos[AXIS_Z];
-    } else if (tipsyIn->header->ndark != 0) {
+    } else if (tipsyIn->head->ndark != 0) {
         tipsyIn->attr->xmin = tipsyIn->gas[i].pos[AXIS_X];
         tipsyIn->attr->xmax = tipsyIn->gas[i].pos[AXIS_X];
         tipsyIn->attr->ymin = tipsyIn->gas[i].pos[AXIS_Y];
         tipsyIn->attr->ymax = tipsyIn->gas[i].pos[AXIS_Y];
         tipsyIn->attr->zmin = tipsyIn->gas[i].pos[AXIS_Z];
         tipsyIn->attr->zmax = tipsyIn->gas[i].pos[AXIS_Z];
-    } else if (tipsyIn->header->nstar != 0) {
+    } else if (tipsyIn->head->nstar != 0) {
         tipsyIn->attr->xmin = tipsyIn->star[i].pos[AXIS_X];
         tipsyIn->attr->xmax = tipsyIn->star[i].pos[AXIS_X];
         tipsyIn->attr->ymin = tipsyIn->star[i].pos[AXIS_Y];
@@ -48,7 +48,7 @@ void autoFindBounds(tipsy* tipsyIn){
         tipsyIn->attr->zmax = tipsyIn->star[i].pos[AXIS_Z];
     } else errorCase(ERR_NO_PARTICLES);
     // Find max min that changes
-    for (i=1; i<tipsyIn->header->nsph; i++){
+    for (i=1; i<tipsyIn->head->nsph; i++){
         if (tipsyIn->gas[i].pos[AXIS_X] < tipsyIn->attr->xmin)
             tipsyIn->attr->xmin = tipsyIn->gas[i].pos[AXIS_X];
         else if (tipsyIn->gas[i].pos[AXIS_X] > tipsyIn->attr->xmax)
@@ -62,7 +62,7 @@ void autoFindBounds(tipsy* tipsyIn){
         else if (tipsyIn->gas[i].pos[AXIS_Z] > tipsyIn->attr->zmax)
             tipsyIn->attr->zmax = tipsyIn->gas[i].pos[AXIS_Z];
     }
-    for (i=1; i<tipsyIn->header->ndark; i++){
+    for (i=1; i<tipsyIn->head->ndark; i++){
         if (tipsyIn->dark[i].pos[AXIS_X] < tipsyIn->attr->xmin)
             tipsyIn->attr->xmin = tipsyIn->dark[i].pos[AXIS_X];
         else if (tipsyIn->dark[i].pos[AXIS_X] > tipsyIn->attr->xmax)
@@ -76,7 +76,7 @@ void autoFindBounds(tipsy* tipsyIn){
         else if (tipsyIn->dark[i].pos[AXIS_Z] > tipsyIn->attr->zmax)
             tipsyIn->attr->zmax = tipsyIn->dark[i].pos[AXIS_Z];
     }
-    for (i=1; i<tipsyIn->header->nstar; i++){
+    for (i=1; i<tipsyIn->head->nstar; i++){
         if (tipsyIn->star[i].pos[AXIS_X] < tipsyIn->attr->xmin)
             tipsyIn->attr->xmin = tipsyIn->star[i].pos[AXIS_X];
         else if (tipsyIn->star[i].pos[AXIS_X] > tipsyIn->attr->xmax)
@@ -113,7 +113,7 @@ void tipsySetDefaults(tipsy* tipsyIn){
     int i;
 
     // Set gas values
-    for (i=0; i < tipsyIn->header->nsph; i++){
+    for (i=0; i < tipsyIn->head->nsph; i++){
         tipsyIn->gas[i].mass = 1.0;
         tipsyIn->gas[i].pos[0] = VAL_NaN;
         tipsyIn->gas[i].pos[1] = VAL_NaN;
@@ -128,7 +128,7 @@ void tipsySetDefaults(tipsy* tipsyIn){
         tipsyIn->gas[i].phi = 1.0;
     }
     // Set dark values
-    for (i=0; i < tipsyIn->header->ndark; i++){
+    for (i=0; i < tipsyIn->head->ndark; i++){
         tipsyIn->dark[i].mass = 1.0;
         tipsyIn->dark[i].pos[AXIS_X] = VAL_NaN;
         tipsyIn->dark[i].pos[AXIS_Y] = VAL_NaN;
@@ -140,7 +140,7 @@ void tipsySetDefaults(tipsy* tipsyIn){
         tipsyIn->dark[i].phi = 1.0;
     }
     // Set star values
-    for (i=0; i < tipsyIn->header->nstar; i++){
+    for (i=0; i < tipsyIn->head->nstar; i++){
         tipsyIn->star[i].mass = 1.0;
         tipsyIn->star[i].pos[AXIS_X] = VAL_NaN;
         tipsyIn->star[i].pos[AXIS_Y] = VAL_NaN;

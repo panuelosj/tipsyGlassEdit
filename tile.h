@@ -83,7 +83,7 @@ typedef struct{
     int nloadedstar;
 } attributes;
 typedef struct {
-    header* header;
+    header* head;
     gas_particle* gas;
     dark_particle* dark;
     star_particle* star;
