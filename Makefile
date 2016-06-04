@@ -1,28 +1,30 @@
-tile: tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o tile.h
-	gcc -o tile tile.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o
+SHARED_OBJ = shared/tileCalc.o shared/tileStructEdit.o shared/tileFileIO.o shared/tileUtils.o shared/tileMisc.o
+
+tile: tile.o $(SHARED_OBJ) tile.h
+	gcc -o tile tile.o $(SHARED_OBJ)
 
 # Random Utils
-tipsyPrintRho: tipsyPrintRho.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o tile.h
-	gcc -o tipsyPrintRho tipsyPrintRho.o tileCalc.o tileStructEdit.o tileFileIO.o tileUtils.o tileMisc.o
+tipsyPrintRho: utils/tipsyPrintRho.o $(SHARED_OBJ) tile.h
+	gcc -o utils/tipsyPrintRho utils/tipsyPrintRho.o $(SHARED_OBJ)
 
-tipsyPrintRho.o: tipsyPrintRho.c tile.h
-	gcc -c ./tipsyPrintRho.c
+tipsyPrintRho.o: utils/tipsyPrintRho.c tile.h
+	gcc -c utils/tipsyPrintRho.c
 
 # Functions
 tile.o: tile.c tile.h
 	gcc -c tile.c
 
-tileCalc.o: tileCalc.c tile.h
-	gcc -c tileCalc.c
+tileCalc.o: shared/tileCalc.c tile.h
+	gcc -c shared/tileCalc.c
 
-tileStructEdit.o: tileStructEdit.c tile.h
-	gcc -c tileStructEdit.c
+tileStructEdit.o: shared/tileStructEdit.c tile.h
+	gcc -c shared/tileStructEdit.c
 
-tileFileIO.o: tileFileIO.c tile.h
-	gcc -c tileFileIO.c
+tileFileIO.o: shared/tileFileIO.c tile.h
+	gcc -c shared/tileFileIO.c
 
-tileUtils.o: tileUtils.c tile.h
-	gcc -c tileUtils.c
+tileUtils.o: shared/tileUtils.c tile.h
+	gcc -c shared/tileUtils.c
 
-tileMisc.o: tileMisc.c tile.h
-	gcc -c tileMisc.c
+tileMisc.o: shared/tileMisc.c tile.h
+	gcc -c shared/tileMisc.c
