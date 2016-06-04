@@ -1,0 +1,5 @@
+tile
+*.std
+*.cpy
+*.param
+*.o
