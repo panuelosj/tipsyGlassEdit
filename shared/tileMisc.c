@@ -26,7 +26,10 @@ void errorCase(const int errorCode){
 			printf("Error: file cannot be opened\n");
 			exit(-1);
 		case ERR_NO_PARTICLES:
-			printf("Error: Struct is empty\n");
+			printf("Error: struct is empty\n");
+			exit(-1);
+		case ERR_MISSING_ARGS:
+			printf("Error: not enough arguments\n");
 			exit(-1);
 	}
 }

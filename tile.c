@@ -14,19 +14,19 @@ int main(){
     // Read in the input glass
     char filename[100] = "glass.std";
     printf("Reading: %s\n", filename);
-    tipsy* glassIn = readTipsyStd(filename);
+    tipsy* tipsyIn = readTipsyStd(filename);
     // Set attributes not set by readTipsy
-    glassIn->attr->xmin = -0.5; glassIn->attr->xmax = 0.5;
-    glassIn->attr->ymin = -0.5; glassIn->attr->ymax = 0.5;
-    glassIn->attr->zmin = -0.5; glassIn->attr->zmax = 0.5;
+    tipsyIn->attr->xmin = -0.5; tipsyIn->attr->xmax = 0.5;
+    tipsyIn->attr->ymin = -0.5; tipsyIn->attr->ymax = 0.5;
+    tipsyIn->attr->zmin = -0.5; tipsyIn->attr->zmax = 0.5;
     printf("Input ");
-    printHeader(glassIn->head);
-    printAttr(glassIn->attr);
+    printHeader(tipsyIn->head);
+    printAttr(tipsyIn->attr);
     printf("=================================================\n");
 
     // Create 8x compressed glass
     printf("\nCreating 8x compressed glass:\n");
-    tipsy* glass8x = tipsyClone(glassIn);
+    tipsy* glass8x = tipsyClone(tipsyIn);
     tipsyScaleShrink(glass8x, 2, 2, 2);
     tipsyTesselate(glass8x, 2, 2, 2);
     tipsyCenter(glass8x);
@@ -37,7 +37,7 @@ int main(){
 
     // Create 1/8x compressed glass
     printf("\nCreating 1/8x compressed glass:\n");
-    tipsy* glass8f = tipsyClone(glassIn);
+    tipsy* glass8f = tipsyClone(tipsyIn);
     tipsyScaleExpand(glass8f, 2, 2, 2);
     tipsyCenter(glass8f);
     printHeader(glass8f->head);
@@ -49,14 +49,14 @@ int main(){
     printf("\nCreating Sod Shocktube:\n");
     tipsyTesselate(glass8f, 7, 1, 1);           // creates 14x2x2
     tipsyTranslate(glass8f, 1, 0, 0);           // pushes the lower density to only the positive x axis
-    tipsyTesselate(glassIn, 14, 2, 2);          // creates 14x2x2
-    tipsyTranslate(glassIn, -13.5, -0.5, -0.5); // pushes the high density to the negative x axis
-    tipsy* sodShocktube = tipsyJoin(glassIn, glass8f);
+    tipsyTesselate(tipsyIn, 14, 2, 2);          // creates 14x2x2
+    tipsyTranslate(tipsyIn, -13.5, -0.5, -0.5); // pushes the high density to the negative x axis
+    tipsy* sodShocktube = tipsyJoin(tipsyIn, glass8f);
     printHeader(sodShocktube->head);
     printAttr(sodShocktube->attr);
     printf("=================================================\n");
     writeTipsyStd("sodShocktube.std", sodShocktube);
 
     // Cleanup
-    tipsyDestroy(glassIn); tipsyDestroy(glass8f); tipsyDestroy(glass8x); tipsyDestroy(sodShocktube);
+    tipsyDestroy(tipsyIn); tipsyDestroy(glass8f); tipsyDestroy(glass8x); tipsyDestroy(sodShocktube);
 }
