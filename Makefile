@@ -1,68 +1,68 @@
-SHARED_OBJ = shared/tileCalc.o shared/tileStructEdit.o shared/tileFileIO.o shared/tileUtils.o shared/tileMisc.o
+SHARED_OBJ = shared/tipsyEditCalc.o shared/tipsyEditStructUtils.o shared/tipsyEditFileIO.o shared/tipsyEditUtils.o shared/tipsyEditMisc.o
 
-tile: tile.o $(SHARED_OBJ) tile.h
-	gcc -o tile tile.o $(SHARED_OBJ)
+tipsyEdit: tipsyEdit.o $(SHARED_OBJ) tipsyEdit.h
+	gcc -o tipsyEdit tipsyEdit.o $(SHARED_OBJ)
 
 utils: tipsyPrintRho tipsyCenter tipsyShrink tipsyExpand tipsyTesselate tipsyTranslate tipsyJoin
 
 # Random Utils
-tipsyPrintRho: utils/tipsyPrintRho.o $(SHARED_OBJ) tile.h
+tipsyPrintRho: utils/tipsyPrintRho.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o utils/tipsyPrintRho utils/tipsyPrintRho.o $(SHARED_OBJ)
 
-tipsyPrintRho.o: utils/tipsyPrintRho.c tile.h
+tipsyPrintRho.o: utils/tipsyPrintRho.c tipsyEdit.h
 	gcc -c utils/tipsyPrintRho.c
 
-tipsyCenter: utils/tipsyCenter.o $(SHARED_OBJ) tile.h
+tipsyCenter: utils/tipsyCenter.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o utils/tipsyCenter utils/tipsyCenter.o $(SHARED_OBJ)
 
-tipsyCenter.o: utils/tipsyCenter.c tile.h
+tipsyCenter.o: utils/tipsyCenter.c tipsyEdit.h
 	gcc -c utils/tipsyCenter.c
 
-tipsyShrink: utils/tipsyShrink.o $(SHARED_OBJ) tile.h
+tipsyShrink: utils/tipsyShrink.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o utils/tipsyShrink utils/tipsyShrink.o $(SHARED_OBJ)
 
-tipsyShrink.o: utils/tipsyShrink.c tile.h
+tipsyShrink.o: utils/tipsyShrink.c tipsyEdit.h
 	gcc -c utils/tipsyShrink.c
 
-tipsyExpand: utils/tipsyExpand.o $(SHARED_OBJ) tile.h
+tipsyExpand: utils/tipsyExpand.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o utils/tipsyExpand utils/tipsyExpand.o $(SHARED_OBJ)
 
-tipsyExpand.o: utils/tipsyExpand.c tile.h
+tipsyExpand.o: utils/tipsyExpand.c tipsyEdit.h
 	gcc -c utils/tipsyExpand.c
 
-tipsyTesselate: utils/tipsyTesselate.o $(SHARED_OBJ) tile.h
+tipsyTesselate: utils/tipsyTesselate.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o utils/tipsyTesselate utils/tipsyTesselate.o $(SHARED_OBJ)
 
-tipsyTesselate.o: utils/tipsyTesselate.c tile.h
+tipsyTesselate.o: utils/tipsyTesselate.c tipsyEdit.h
 	gcc -c utils/tipsyTesselate.c
 
-tipsyTranslate: utils/tipsyTranslate.o $(SHARED_OBJ) tile.h
+tipsyTranslate: utils/tipsyTranslate.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o utils/tipsyTranslate utils/tipsyTranslate.o $(SHARED_OBJ)
 
-tipsyTranslate.o: utils/tipsyTranslate.c tile.h
+tipsyTranslate.o: utils/tipsyTranslate.c tipsyEdit.h
 	gcc -c utils/tipsyTranslate.c
 
-tipsyJoin: utils/tipsyJoin.o $(SHARED_OBJ) tile.h
+tipsyJoin: utils/tipsyJoin.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o utils/tipsyJoin utils/tipsyJoin.o $(SHARED_OBJ)
 
-tipsyJoin.o: utils/tipsyJoin.c tile.h
+tipsyJoin.o: utils/tipsyJoin.c tipsyEdit.h
 	gcc -c utils/tipsyJoin.c
 
 # Functions
-tile.o: tile.c tile.h
-	gcc -c tile.c
+tipsyEdit.o: tipsyEdit.c tipsyEdit.h
+	gcc -c tipsyEdit.c
 
-tileCalc.o: shared/tileCalc.c tile.h
-	gcc -c shared/tileCalc.c
+tipsyEditCalc.o: shared/tipsyEditCalc.c tipsyEdit.h
+	gcc -c shared/tipsyEditCalc.c
 
-tileStructEdit.o: shared/tileStructEdit.c tile.h
-	gcc -c shared/tileStructEdit.c
+tipsyEditStructUtils.o: shared/tipsyEditStructUtils.c tipsyEdit.h
+	gcc -c shared/tipsyEditStructUtils.c
 
-tileFileIO.o: shared/tileFileIO.c tile.h
-	gcc -c shared/tileFileIO.c
+tipsyEditFileIO.o: shared/tipsyEditFileIO.c tipsyEdit.h
+	gcc -c shared/tipsyEditFileIO.c
 
-tileUtils.o: shared/tileUtils.c tile.h
-	gcc -c shared/tileUtils.c
+tipsyEditUtils.o: shared/tipsyEditUtils.c tipsyEdit.h
+	gcc -c shared/tipsyEditUtils.c
 
-tileMisc.o: shared/tileMisc.c tile.h
-	gcc -c shared/tileMisc.c
+tipsyEditMisc.o: shared/tipsyEditMisc.c tipsyEdit.h
+	gcc -c shared/tipsyEditMisc.c

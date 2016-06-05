@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-#include "../tile.h"
+#include "../tipsyEdit.h"
 
 /*
  ######  ######## ##    ## ######## ######## ########
@@ -249,7 +249,7 @@ void tipsyTranslate(tipsy* tipsyIn, const float xShift, const float yShift, cons
         a negative value will move them in the negative axis direction.
 
         Parameters:
-            tipsy* tipsyIn      - pointer to the tipsy struct to be tiled
+            tipsy* tipsyIn      - pointer to the tipsy struct to be translated
             const float xShift  - amount to translate the particles by in the x axis
             const float yShift  - amount to translate the particles by in the y axis
             const float zShift  - amount to translate the particles by in the z axis

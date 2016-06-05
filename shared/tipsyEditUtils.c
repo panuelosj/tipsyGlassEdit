@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-#include "../tile.h"
+#include "../tipsyEdit.h"
 
 /*
 ########   #######  ##     ## ##    ## ########   ######
