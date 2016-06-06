@@ -24,8 +24,7 @@ int main(int argc, char *argv[]){
     printf("=================================================\n");
 
     for(i=0; i < tipsyIn->head->nsph; i++){
-        printf("%f, ", tipsyIn->gas[i].rho);
-        printf("\n");
+        printf("(%f, %f, %f)\n", tipsyIn->gas[i].vel[AXIS_X], tipsyIn->gas[i].vel[AXIS_Y], tipsyIn->gas[i].vel[AXIS_Z]);
     }
     // Cleanup
     tipsyDestroy(tipsyIn);

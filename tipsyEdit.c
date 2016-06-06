@@ -6,11 +6,13 @@
 #include "tipsyEdit.h"
 
 
-//=============================================================================
-//-------------------------ACTUAL-CODE-----------------------------------------
-//=============================================================================
+/*=============================================================================
+ Creates an initial condition for a shocktube
+=============================================================================*/
 
 int main(){
+    int i;
+
     // Read in the input glass
     char filename[100] = "glass.std";
     printf("Reading: %s\n", filename);
@@ -24,17 +26,6 @@ int main(){
     printAttr(tipsyIn->attr);
     printf("=================================================\n");
 
-    // Create 8x compressed glass
-    printf("\nCreating 8x compressed glass:\n");
-    tipsy* glass8x = tipsyClone(tipsyIn);
-    tipsyScaleShrink(glass8x, 2, 2, 2);
-    tipsyTesselate(glass8x, 2, 2, 2);
-    tipsyCenter(glass8x);
-    printHeader(glass8x->head);
-    printAttr(glass8x->attr);
-    printf("=================================================\n");
-    writeTipsyStd("glass8x.std", glass8x);
-
     // Create 1/8x compressed glass
     printf("\nCreating 1/8x compressed glass:\n");
     tipsy* glass8f = tipsyClone(tipsyIn);
@@ -45,18 +36,24 @@ int main(){
     printf("=================================================\n");
     writeTipsyStd("glass8f.std", glass8f);
 
-    // Tile the two base units
-    printf("\nCreating Sod Shocktube:\n");
-    tipsyTesselate(glass8f, 7, 1, 1);           // creates 14x2x2
-    tipsyTranslate(glass8f, 1, 0, 0);           // pushes the lower density to only the positive x axis
-    tipsyTesselate(tipsyIn, 14, 2, 2);          // creates 14x2x2
-    tipsyTranslate(tipsyIn, -13.5, -0.5, -0.5); // pushes the high density to the negative x axis
-    tipsy* sodShocktube = tipsyJoin(tipsyIn, glass8f);
-    printHeader(sodShocktube->head);
-    printAttr(sodShocktube->attr);
-    printf("=================================================\n");
-    writeTipsyStd("sodShocktube.std", sodShocktube);
+    // Tile the 1/8x compressed glass to 28x2x2
+    printf("\nTiling Shocktube:\n");
+    tipsy* rcrShock = tipsyClone(glass8f);
+    tipsyTesselate(rcrShock, 14, 1, 1);           // creates 28x2x2
+    printf("\nCentering:\n");
+    tipsyCenter(rcrShock);
+    printf("\nEditing Velocities:\n");
+    for (i=0; i<rcrShock->head->nsph; i++){
+        if (rcrShock->gas[i].pos[AXIS_X] < 0.0)
+            rcrShock->gas[i].vel[AXIS_X] = 5.0;
+        else if (rcrShock->gas[i].pos[AXIS_X] > 0.0)
+            rcrShock->gas[i].vel[AXIS_X] = -5.0;
+    }
+    printHeader(rcrShock->head);
+    printAttr(rcrShock->attr);
+
+    writeTipsyStd("SCSShock5.std", rcrShock);
 
     // Cleanup
-    tipsyDestroy(tipsyIn); tipsyDestroy(glass8f); tipsyDestroy(glass8x); tipsyDestroy(sodShocktube);
+    tipsyDestroy(tipsyIn); tipsyDestroy(glass8f); tipsyDestroy(rcrShock);
 }
