@@ -1,7 +1,7 @@
 SHARED_OBJ = shared/tipsyEditCalc.o shared/tipsyEditStructUtils.o shared/tipsyEditFileIO.o shared/tipsyEditUtils.o shared/tipsyEditMisc.o
 
 tipsyEdit: tipsyEdit.o $(SHARED_OBJ) tipsyEdit.h
-	gcc -o tipsyEdit tipsyEdit.o $(SHARED_OBJ)
+	gcc -o tipsyEdit tipsyEdit.o $(SHARED_OBJ) -lm
 
 utils: tipsyPrintRho tipsyPrintVel tipsyPrintHeader tipsyCenter tipsyShrink tipsyExpand tipsyTesselate tipsyTranslate tipsyJoin
 
@@ -62,7 +62,7 @@ tipsyJoin.o: utils/tipsyJoin.c tipsyEdit.h
 
 # Functions
 tipsyEdit.o: tipsyEdit.c tipsyEdit.h
-	gcc -c tipsyEdit.c
+	gcc -c tipsyEdit.c -lm
 
 tipsyEditCalc.o: shared/tipsyEditCalc.c tipsyEdit.h
 	gcc -c shared/tipsyEditCalc.c
