@@ -45,14 +45,14 @@ int main(){
     printf("\nEditing Velocities:\n");
     for (i=0; i<rcrShock->head->nsph; i++){
         if (rcrShock->gas[i].pos[AXIS_X] < 0.0)
-            rcrShock->gas[i].vel[AXIS_X] = -10.0;
+            rcrShock->gas[i].vel[AXIS_X] = 1.0;
         else if (rcrShock->gas[i].pos[AXIS_X] > 0.0)
-            rcrShock->gas[i].vel[AXIS_X] = 10.0;
+            rcrShock->gas[i].vel[AXIS_X] = -1.0;
     }
     printHeader(rcrShock->head);
     printAttr(rcrShock->attr);
 
-    writeTipsyStd("RCRVel10.std", rcrShock);
+    writeTipsyStd("SCSShock.std", rcrShock);
 
     // Cleanup
     tipsyDestroy(tipsyIn); tipsyDestroy(glass8f); tipsyDestroy(rcrShock);
