@@ -91,6 +91,9 @@ typedef struct {
     attributes* attr;
 } tipsy;
 
+
+typedef float (*flop)(float val1, float val2);
+typedef int (*crop)(void* particle, int type);
 /*
 ######## ##     ## ##    ##  ######  ######## ####  #######  ##    ##  ######
 ##       ##     ## ###   ## ##    ##    ##     ##  ##     ## ###   ## ##    ##
@@ -100,8 +103,28 @@ typedef struct {
 ##       ##     ## ##   ### ##    ##    ##     ##  ##     ## ##   ### ##    ##
 ##        #######  ##    ##  ######     ##    ####  #######  ##    ##  ######
 */
+
+int croptop(void* particle, int type);
+int cropbot(void* particle, int type);
+
+// particleFlops.c
+void pFlop(void* dest, void* src1, void* src2, int type, flop op);
+void pFlopGas(gas_particle* dest, gas_particle* src1, gas_particle* src2, flop op);
+void pFlopDark(dark_particle* dest, dark_particle* src1, dark_particle* src2, flop op);
+void pFlopStar(star_particle* dest, star_particle* src1, star_particle* src2, flop op);
+
+void vFlopGas(gas_particle* dest, gas_particle* src1, float src2, flop op);
+void vFlopDark(dark_particle* dest, dark_particle* src1, float src2, flop op);
+void vFlopStar(star_particle* dest, star_particle* src1, float src2, flop op);
+
+float flopCopy(float val1, float val2);
+float flopSetZero(float val1, float val2);
+float flopAdd(float val1, float val2);
+float flopDivide(float val1, float val2);
+
 // tileCalc.c
 void tipsyCenter(tipsy* tipsyIn);
+void tipsyCrop(tipsy* tipsyIn, crop op);
 void tipsyScaleShrink(tipsy* tipsyIn, const int xShrink, const int yShrink, const int zShrink);
 void tipsyScaleExpand(tipsy* tipsyIn, const float xExpand, const float yExpand, const float zExpand);
 void tipsyTesselate(tipsy* tipsyIn, const int xTile, const int yTile, const int zTile);

@@ -1,4 +1,4 @@
-SHARED_OBJ = shared/tipsyEditCalc.o shared/tipsyEditStructUtils.o shared/tipsyEditFileIO.o shared/tipsyEditUtils.o shared/tipsyEditMisc.o
+SHARED_OBJ = shared/tipsyEditCalc.o shared/tipsyEditStructUtils.o shared/tipsyEditFileIO.o shared/tipsyEditUtils.o shared/tipsyEditMisc.o shared/particleFlops.o
 
 tipsyEdit: tipsyEdit.o $(SHARED_OBJ) tipsyEdit.h
 	gcc -o tipsyEdit tipsyEdit.o $(SHARED_OBJ) -lm
@@ -78,3 +78,6 @@ tipsyEditUtils.o: shared/tipsyEditUtils.c tipsyEdit.h
 
 tipsyEditMisc.o: shared/tipsyEditMisc.c tipsyEdit.h
 	gcc -c shared/tipsyEditMisc.c
+
+particleFlops.o: shared/particleFlops.c tipsyEdit.h
+	gcc -c shared/particleFlops.c
